@@ -33,6 +33,7 @@ const SUPPRESS_CONSOLE_OUTPUT = false
 const TABULAR_PATH = "" // empty per default
 const VISUAL_PATH = "visual/"
 const HELP_PATH = "help/"
+const PRODUCTION_PATH = "production/"
 
 // Embed external files in compiled binary filesystem
 
@@ -68,6 +69,8 @@ func main() {
 	http.HandleFunc("/"+VISUAL_PATH, converter.ConverterHandlerVisual)
 	// Help handler
 	http.HandleFunc("/"+HELP_PATH, converter.HelpHandler)
+	// Production handler
+	http.HandleFunc("/"+PRODUCTION_PATH, converter.ConverterHandlerProduction)
 
 	// Check for custom port
 	port := os.Getenv(ENV_VAR_PORT)
@@ -111,8 +114,10 @@ func main() {
 	log.Println(" - Logging path: " + fmt.Sprint(converter.LoggingPath))
 	log.Printf("Navigate to the URL http://localhost%s/"+TABULAR_PATH+" in your browser to open the tabular output version of IG Parser.\n", portSuffix)
 	log.Printf("Navigate to the URL http://localhost%s/"+VISUAL_PATH+" in your browser to open the visual output version of IG Parser.\n", portSuffix)
+	log.Printf("Navigate to the URL http://localhost%s/"+PRODUCTION_PATH+" in your browser to open the production output version of IG Parser.\n", portSuffix)
+
 	// Attempt launch of URL in browser
-	err0 := helper.OpenBrowser("http://localhost" + portSuffix + "/" + VISUAL_PATH)
+	err0 := helper.OpenBrowser("http://localhost" + portSuffix + "/" + PRODUCTION_PATH)
 	if err0 != nil {
 		log.Println("Browser launch failed (Error: " + err0.Error() + "). Please launch browser manually using URLs above.")
 	}

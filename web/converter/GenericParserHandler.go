@@ -485,8 +485,8 @@ func converterHandler(w http.ResponseWriter, r *http.Request, templateName strin
 		"RAW STATEMENT: " + retStruct.RawStmt + "\n" +
 		"ANNOTATED STATEMENT: " + retStruct.CodedStmt + "\n")
 
-	// Check for empty input statement first
-	if retStruct.CodedStmt == "" {
+	// Check for empty input statement first BUT leave out production template
+	if retStruct.CodedStmt == "" && templateName != TEMPLATE_NAME_PARSER_PRODUCTION {
 		retStruct.Success = false
 		retStruct.Error = true
 		retStruct.Message = shared.ERROR_INPUT_NO_STATEMENT
@@ -512,6 +512,9 @@ func converterHandler(w http.ResponseWriter, r *http.Request, templateName strin
 		} else if templateName == TEMPLATE_NAME_PARSER_VISUAL {
 			Println("Visual output requested")
 			handleVisualOutput(w, retStruct.CodedStmt, retStruct.StmtId, retStruct, printFlatProperties, printBinaryTree, printActivationConditionsOnTop, dynamicOutput, produceIGExtendedOutput, includeAnnotations, includeDoV)
+		} else if templateName == TEMPLATE_NAME_PARSER_PRODUCTION {
+			Println("Production output requested")
+			handleProductionOutput(w, r, retStruct, dynamicOutput, produceIGExtendedOutput, includeAnnotations, retStruct.OutputType, printHeaders, formValuePrintIgScript)
 		} else {
 			log.Fatal("Output variant " + templateName + " not found.")
 		}

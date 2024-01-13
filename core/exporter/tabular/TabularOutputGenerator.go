@@ -25,7 +25,7 @@ const componentStmtRefSeparator = ","
 const indexSymbol = "_"
 
 // Statement ID prefix to ensure interpretation as text field in Google Sheets (does not remove trailing zeroes)
-const stmtIdPrefix = "'"
+const StmtIdPrefix = "'"
 
 // Separator for logical operator expressions (e.g., OR[650.1,650.2]|AND[123.1,123.2])
 const logicalOperatorSeparator = ";"
@@ -806,7 +806,7 @@ func printTabularOutput(statementMap []map[string]string, igScriptInput string, 
 }
 
 /*
-Generates CSV output from map of categorized statement elements, IG Script input (included in output if parameterized via printIgScriptInput), 
+Generates CSV output from map of categorized statement elements, IG Script input (included in output if parameterized via printIgScriptInput),
 as well as header columns (symbols and names) for output generation.
 Further requires column header names for output generation, alongside specification of separator symbol.
 Optionally writes to file (if filename is provided), with option to overwrite existing files,
@@ -818,11 +818,11 @@ func generateCSVOutput(statementMap []map[string]string, igScriptInput string, h
 	suffix := "\n"
 
 	// Delegate actual printing
-	return printTabularOutput(statementMap, igScriptInput, headerCols, headerColsNames, "", stmtIdPrefix, suffix, separator, filename, overwrite, printHeaders, printIgScriptInput)
+	return printTabularOutput(statementMap, igScriptInput, headerCols, headerColsNames, "", StmtIdPrefix, suffix, separator, filename, overwrite, printHeaders, printIgScriptInput)
 }
 
 /*
-Generates Google Sheets output from map of categorized statement elements, IG Script input (for consideration in output - parameterized via printIgScriptInput), 
+Generates Google Sheets output from map of categorized statement elements, IG Script input (for consideration in output - parameterized via printIgScriptInput),
 as well as header columns (symbols and names) for output generation.
 Further requires column header names for output generation, alongside specification of separator symbol.
 Optionally writes to file (if filename is provided), with option to overwrite existing files,
@@ -849,7 +849,7 @@ func generateGoogleSheetsOutput(statementMap []map[string]string, igScriptInput 
 	suffix := bsuf.String()
 
 	// Delegate actual printing
-	return printTabularOutput(statementMap, igScriptInput, headerCols, headerColsNames, prefix, stmtIdPrefix, suffix, separator, filename, overwrite, printHeaders, printIgScriptInput)
+	return printTabularOutput(statementMap, igScriptInput, headerCols, headerColsNames, prefix, StmtIdPrefix, suffix, separator, filename, overwrite, printHeaders, printIgScriptInput)
 }
 
 /*
