@@ -4,124 +4,248 @@ import (
 	"IG-Parser/core/endpoints"
 	"IG-Parser/core/exporter/tabular"
 	"IG-Parser/core/tree"
+	"IG-Parser/web/converter/shared"
+	"errors"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 
 	"github.com/xuri/excelize/v2"
 )
 
-func main() {
+func SearchCodedStatementIdx(header []string) ([]int, HeaderMatchingError) {
+	var indexes []int
 
-	//Open File
+	for i, cellString0 := range header {
 
-	f, err := excelize.OpenFile("/Users/ignaciopastorebenaim/go/src/IG-Parser/uploads/200_MAX.xlsx")
-	if err != nil {
-		fmt.Println("Error: open file")
+		cellString := regexp.MustCompile(`[^a-zA-Z]+`).ReplaceAllString(cellString0, "")
+		cellString1 := strings.ToLower(cellString)
+
+		regStatement := regexp.MustCompile("(?:sta?t?e?m?e?n?t?)")
+		regCoded := regexp.MustCompile("(?:co?d)")
+		matchStatement := regStatement.MatchString(cellString1)
+		matchCoded := regCoded.MatchString(cellString1)
+
+		if matchStatement && matchCoded {
+			// log.Println("Match: ", cellString0)
+			indexes = append(indexes, i)
+		}
+		//  else {
+		// 	log.Println("No Match: ", cellString0)
+		// }
 	}
 
-	// Defer Close
+	if len(indexes) == 0 {
+		return nil, HeaderMatchingError{ErrorCode: HEADER_MATCHING_ERROR_NO_MATCH_FOR_CODED_STATEMENT,
+			ErrorMessage: "No matches for Coded Statement found in the input header"}
+	} else if len(indexes) > 1 {
+		return indexes, HeaderMatchingError{ErrorCode: HEADER_MATCHING_ERROR_MULTIPLE_MATCHES_FOR_CODED_STATEMENT,
+			ErrorMessage: "Multiple matches for Coded Statement found in the input header"}
+	} else {
+		return indexes, HeaderMatchingError{ErrorCode: HEADER_MATCHING_NO_ERROR_MATCH_FOR_CODED_STATEMENT,
+			ErrorMessage: "No Maatching Error"}
+	}
+}
+
+// Indicates founding no matches in the input header for "Coded Statement"
+const HEADER_MATCHING_ERROR_NO_MATCH_FOR_CODED_STATEMENT = "NO_MATCH_FOR_CODED_STATEMENT"
+
+// Indicates founding no matches in the input header for "Coded Statement"
+const HEADER_MATCHING_ERROR_MULTIPLE_MATCHES_FOR_CODED_STATEMENT = "MULTIPLE_MATCHES_FOR_CODED_STATEMENT"
+
+// Indicates founding no matches in the input header for "Coded Statement"
+const HEADER_MATCHING_NO_ERROR_MATCH_FOR_CODED_STATEMENT = "NO_ERROR_FOR_CODED_STATEMENT"
+
+/*
+Error type signaling errors during searching for Coded Statement Column
+*/
+type HeaderMatchingError struct {
+	ErrorCode    string
+	ErrorMessage string
+}
+
+func (e *HeaderMatchingError) Error() error {
+	return errors.New("Header Matching Error " + e.ErrorCode + ": " + e.ErrorMessage)
+}
+
+func main() {
+
+	// Copy and append result It is copying without enriched data. I think it could read any matrix. Check of imbalanced matrices
+	// f1, err := excelize.OpenFile("/Users/ignaciopastorebenaim/go/src/IG-Parser/uploads/200_MAX.xlsx")
+	f1, err := excelize.OpenFile("/Users/ignaciopastorebenaim/go/src/IG-Parser/uploads/200_MAX_error.xlsx")
+	// f1, err := excelize.OpenFile("/Users/ignaciopastorebenaim/go/src/IG-Parser/uploads/200_MAX_cdedStatementCOLUMN.xlsx")
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 	defer func() {
-		if err := f.Close(); err != nil {
+		if err := f1.Close(); err != nil {
 			fmt.Println(err)
-			return
 		}
 	}()
 
-	//Here I could get the name of the active sheet and then getrows
-	// Get all the rows in the Sheet1.
-	rows, err := f.GetRows("Sheet1")
+	// Get active Sheet to overcome bug of renaming sheeet and different languages
+	activeSheet := f1.GetSheetName(f1.GetActiveSheetIndex())
+
+	// Open new StreamWriter
+	sw1, err := f1.NewStreamWriter(activeSheet)
 	if err != nil {
-		fmt.Println("Error: GetRows")
-	}
-
-	// New File to populate
-	f1 := excelize.NewFile()
-
-	// Open Stream Writer to populate Sheet1
-	streamWriter, err := f1.NewStreamWriter("Sheet1")
-	if err != nil {
-		fmt.Println("Error: NewStreamWriter")
-	}
-
-	// Header: Populate string for first row
-	headerString := "Statement ID,Attributes,Attributes Property,Attributes Property Reference,Deontic,Aim,Direct Object,Direct Object Reference," +
-		"Direct Object Property,Direct Object Property Reference,Indirect Object,Indirect Object Reference,Indirect Object Property,Indirect Object Property Reference," +
-		"Activation Condition,Activation Condition Reference,Execution Constraint,Execution Constraint Reference,Constituted Entity,Constituted Entity Property," +
-		"Constituted Entity Property Reference,Modal,Constitutive Function,Constituting Properties,Constituting Properties Reference,Constituting Properties Properties," +
-		"Constituting Properties Properties Reference,Or Else Reference,Logical Linkage (Statements),Logical Linkage (Components)"
-	arrayOfHeader := strings.Split(headerString, ",")
-
-	arrayOfHeaderInterface := make([]interface{}, len(arrayOfHeader))
-	for i, v := range arrayOfHeader {
-		arrayOfHeaderInterface[i] = v
-	}
-
-	// Write Header
-	if err := streamWriter.SetRow("A1", arrayOfHeaderInterface); err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	// Here I should run through the matrix and keep the coded text to give it to the parser
-	// UPGRADE: I should append a call with nil or "" values. If not the length of row it´s 7 instead of 8
-	rowindexExcel := 2
-	colindexExcel := "A"
+	// Get 2D array of the book with the stream writer
+	matrix, err := f1.GetRows(activeSheet)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	//Inicializo stmtID y codedStatementColumn
 	stmtId := "1"
+	rowCoordinate := 1
+	var codedStatementColumn int
 
-	for i := 1; i < len(rows); i++ {
-		fmt.Printf("Check 72 %v", i)
-		codedStmt := rows[i][8]
+	// Set Defaultconfig to overwrite later
+	shared.SetDefaultConfig()
+	// ACá falta inicializar el index para coordinatesToCellName: no puede ser r
 
-		//Create Tabular Output
-		output, err0 := endpoints.ConvertIGScriptToTabularOutput(codedStmt, stmtId, tabular.OUTPUT_TYPE_CSV, "", false, false, tabular.DEFAULT_IG_SCRIPT_OUTPUT)
+	// General func to write on excel
 
-		// Getting the error and here I should paste it
-		if err0.ErrorCode != tree.PARSING_NO_ERROR {
-			fmt.Println(err0.ErrorCode)
+	//Iterate over rows
+	for r, rowMatrix := range matrix {
+
+		//Initialize column index for Coded Statement
+		// Row to append and write
+		rowToWriteInterface := make([]interface{}, 0)
+		errorMessageInterface := make([]interface{}, 1)
+		// row to overwrite. Possible bug: rows cant be larger than the header of the matrix. POSSIBLE BUG in len(matrix[0])
+		rowMatrixInterface := make([]interface{}, len(matrix[0]))
+		//Copy to interface
+		for i, v := range rowMatrix {
+			rowMatrixInterface[i] = v
 		}
 
-		// Spliting Ouptut into rows. The first element of outputRows is 0 or nil. The len of outputRows is 3 so later
-		// I must correct the i index. rowindexExcel and colindexExcel are the coordinates from where I should populate the sheet
+		// Append Header
+		if r == 0 {
+			tabular.SetIncludeHeaders(true)
 
-		outputRows := strings.Split(output[0].Output, tabular.StmtIdPrefix) //Be aware here with the apostrophe
-		outputMatrix := make([][]string, len(outputRows)-1)
-		outputSingleInterface := make([]interface{}, len(outputRows[1]))
+			//Search for column of Coded Statement
+			arrayCodedStatementColumn, err0 := SearchCodedStatementIdx(rowMatrix)
+			if err0.ErrorCode != HEADER_MATCHING_NO_ERROR_MATCH_FOR_CODED_STATEMENT {
+				fmt.Println(err0.Error())
+			}
+			codedStatementColumn = arrayCodedStatementColumn[0]
 
-		for j := 0; j < len(outputRows)-1; j++ {
-			outputMatrix[j] = strings.Split(outputRows[j+1], tabular.CellSeparator)
-			for k, v := range outputMatrix[j] {
-				outputSingleInterface[k] = v
+			// Make ghost statement to print header
+			ghostStatementToPrintHeader := "Cac{Once E(policy) F(comes into force)} A,p(relevant) A(regulators) D(must) I(monitor [AND] enforce) Bdir(compliance)."
+			output, _ := endpoints.ConvertIGScriptToTabularOutput(ghostStatementToPrintHeader, stmtId, tabular.OUTPUT_TYPE_CSV, "", false, tabular.IncludeHeader(), tabular.DEFAULT_IG_SCRIPT_OUTPUT)
 
+			headerArray := output[0].HeaderNames
+			headerArray = append([]string{"Error"}, headerArray...)
+
+			headerInterface := make([]interface{}, len(headerArray))
+			for i, v := range headerArray {
+				headerInterface[i] = v
 			}
 
-			err := streamWriter.SetRow(colindexExcel+strconv.Itoa(rowindexExcel), outputSingleInterface)
+			rowToWriteInterface = append(rowMatrixInterface, headerInterface...)
+
+			// Printo row from coordinateCell
+			coordinateCell, err := excelize.CoordinatesToCellName(1, rowCoordinate)
 			if err != nil {
 				fmt.Println(err)
-				return
-			} else {
-				rowindexExcel += 1
+				break
 			}
+			if err := sw1.SetRow(coordinateCell, rowToWriteInterface); err != nil {
+				fmt.Println(err)
+				break
+			}
+			rowCoordinate += 1
+
+		} else {
+			tabular.SetIncludeHeaders(false)
+
+			// Append coded staments
+
+			output, err0 := endpoints.ConvertIGScriptToTabularOutput(rowMatrix[codedStatementColumn], stmtId, tabular.OUTPUT_TYPE_CSV, "", false, tabular.IncludeHeader(), tabular.DEFAULT_IG_SCRIPT_OUTPUT)
+
+			//Getting the error and here I should paste it
+			if err0.ErrorCode != tree.PARSING_NO_ERROR {
+				errorMessageInterface[0] = err0.ErrorMessage
+
+				rowToWriteInterface = append(rowMatrixInterface, errorMessageInterface)
+
+				// Printo row from coordinateCell
+				coordinateCell, err := excelize.CoordinatesToCellName(1, rowCoordinate)
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+				if err := sw1.SetRow(coordinateCell, rowToWriteInterface); err != nil {
+					fmt.Println(err)
+					break
+				}
+				rowCoordinate += 1
+				continue
+			}
+
+			errorMessageInterface[0] = "OK"
+
+			stmtIdint, _ := strconv.Atoi(stmtId)
+			stmtIdint += 1
+			stmtId = strconv.Itoa(stmtIdint)
+
+			//Primero append OK (cuando catchee el error)
+
+			multipleOutputRows := strings.Split(output[0].Output, tabular.StmtIdPrefix) //Be aware here with the apostrophe
+			//Leave out first value of Split func beaceuse its empty
+			multipleOutputRows = multipleOutputRows[1:]
+
+			//Catch the statements without adding a row
+			for _, singleOutputRow := range multipleOutputRows {
+
+				//leave out last value /n
+				singleOutputRow := strings.Split(singleOutputRow, tabular.CellSeparator)
+				if len(singleOutputRow) > 0 {
+					singleOutputRow = singleOutputRow[:len(singleOutputRow)-1]
+				}
+
+				singleOutputRowInterface := make([]interface{}, len(singleOutputRow))
+				for i, v := range singleOutputRow {
+					singleOutputRowInterface[i] = v
+				}
+
+				//BUG en error MessageInterface
+				rowToWriteInterface = append(rowMatrixInterface, errorMessageInterface)
+				rowToWriteInterface = append(rowToWriteInterface, singleOutputRowInterface...)
+
+				// Printo row from coordinateCell
+				coordinateCell, err := excelize.CoordinatesToCellName(1, rowCoordinate)
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+				if err := sw1.SetRow(coordinateCell, rowToWriteInterface); err != nil {
+					fmt.Println(err)
+					break
+				}
+				rowCoordinate += 1
+
+			}
+
 		}
-		stmtIdint, _ := strconv.Atoi(stmtId)
-		stmtIdint += 1
-		stmtId = strconv.Itoa(stmtIdint)
 	}
 
-	// FLush
-	if err := streamWriter.Flush(); err != nil {
+	if err := sw1.Flush(); err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	// Save (I should put a success message). I also should get the number of the interview to pass it to the string path
-	// AND ERASE TEMP FILE (/uploads)
-
-	err90 := f1.SaveAs("/Users/ignaciopastorebenaim/RESILIENT_IG-Parser/coded/200_MAX_CODED.xlsx")
-	if err90 != nil {
-		fmt.Println(err90)
-
+	if err := f1.SaveAs("/Users/ignaciopastorebenaim/go/src/IG-Parser/coded/200_MAX_coded.xlsx"); err != nil {
+		fmt.Println(err)
+		return
 	}
-	fmt.Println("Successfully written as: " + "/Users/ignaciopastorebenaim/RESILIENT_IG-Parser/coded/200_MAX_CODED.xlsx")
-
 }
