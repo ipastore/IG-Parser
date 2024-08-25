@@ -438,6 +438,7 @@ func handleProductionOutput(w http.ResponseWriter, r *http.Request, retStruct sh
 
 				// Append coded staments
 
+				// BUG when there is a  blanck cell in coded statement
 				output, err0 := endpoints.ConvertIGScriptToTabularOutput(rowMatrix[codedStatementColumn], stmtId, tabular.OUTPUT_TYPE_CSV, "", false, tabular.IncludeHeader(), tabular.DEFAULT_IG_SCRIPT_OUTPUT)
 
 				//Getting the error and here I should paste it

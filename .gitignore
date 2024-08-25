@@ -3,3 +3,4 @@ logs/
 uploads/
 coded/
 .vscode/launch.json
+web/converter/errorOutput.error
