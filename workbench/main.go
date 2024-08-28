@@ -115,7 +115,7 @@ func main() {
 	activeSheet := f1.GetSheetName(f1.GetActiveSheetIndex())
 
 	// Open new StreamWriter
-	sw1, err := f1.NewStreamWriter(activeSheet)
+	sw, err := f1.NewStreamWriter(activeSheet)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -143,7 +143,7 @@ func main() {
 			return
 		}
 
-		if err := sw1.SetRow(coordinateCell, rowToWriteInterface); err != nil {
+		if err := sw.SetRow(coordinateCell, rowToWriteInterface); err != nil {
 			fmt.Println(err)
 			return
 		}
@@ -152,7 +152,7 @@ func main() {
 	}
 
 	// Flush the stream writer
-	if err := sw1.Flush(); err != nil {
+	if err := sw.Flush(); err != nil {
 		fmt.Println(err)
 		return
 	}
