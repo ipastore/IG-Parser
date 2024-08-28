@@ -399,6 +399,7 @@
 
 
 <span data-text=""><a href="/visual/" onclick="saveFormContent()">Switch to visual version of IG Parser</a></span><br /><br />
+<span data-text=""><a href="/production/" onclick="saveFormContent()">Switch to production version of IG Parser</a></span><br /><br />
 
 
 <span data-text="This entry field should contain a statement ID (consisting of numbers and/or letters) that is the basis for generating substatement IDs." class="tooltip">Statement ID:</span>

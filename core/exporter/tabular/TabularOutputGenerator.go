@@ -30,7 +30,7 @@ const componentStmtRefSeparator = ","
 const indexSymbol = "_"
 
 // Statement ID prefix to ensure interpretation as text field in Google Sheets (does not remove trailing zeroes)
-const stmtIdPrefix = "'"
+const StmtIdPrefix = "'"
 
 // Separator for logical operator expressions (e.g., OR[650.1,650.2]|AND[123.1,123.2])
 const logicalOperatorSeparator = ";"
@@ -860,7 +860,7 @@ func generateCSVOutput(statementMap []map[string]string, originalStatement strin
 	suffix := "\n"
 
 	// Delegate actual printing
-	return printTabularOutput(statementMap, originalStatement, igScriptInput, headerCols, headerColsNames, "", stmtIdPrefix, suffix, separator, filename, overwrite, printHeaders, printOriginalStatement, printIgScriptInput)
+	return printTabularOutput(statementMap, originalStatement, igScriptInput, headerCols, headerColsNames, "", StmtIdPrefix, suffix, separator, filename, overwrite, printHeaders, printOriginalStatement, printIgScriptInput)
 }
 
 /*
@@ -895,7 +895,7 @@ func generateGoogleSheetsOutput(statementMap []map[string]string, originalStatem
 	suffix := bsuf.String()
 
 	// Delegate actual printing
-	return printTabularOutput(statementMap, originalStatement, igScriptInput, headerCols, headerColsNames, prefix, stmtIdPrefix, suffix, separator, filename, overwrite, printHeaders, printOriginalStatement, printIgScriptInput)
+	return printTabularOutput(statementMap, originalStatement, igScriptInput, headerCols, headerColsNames, prefix, StmtIdPrefix, suffix, separator, filename, overwrite, printHeaders, printOriginalStatement, printIgScriptInput)
 }
 
 /*

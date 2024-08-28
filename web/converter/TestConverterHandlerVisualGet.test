@@ -430,6 +430,7 @@
 
 
 <span data-text=""><a href="/" onclick="saveFormContent()">Switch to tabular version of IG Parser</a></span><br /><br />
+<span data-text=""><a href="/production/" onclick="saveFormContent()">Switch to production version of IG Parser</a></span><br /><br />
 
 <span data-text="This section includes specific customizations for the output generation, which affect the generated output. Where larger numbers of statements are encoded for analytical purposes, ensure the consistent parameterization for all generated statements." class="tooltip">Parameters:</span>
 

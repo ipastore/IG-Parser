@@ -2,6 +2,7 @@ package converter
 
 import (
 	"IG-Parser/core/endpoints"
+	"IG-Parser/core/exporter/production"
 	"IG-Parser/core/exporter/tabular"
 	"IG-Parser/core/tree"
 	"IG-Parser/web/converter/shared"
@@ -13,6 +14,72 @@ import (
 /*
 Contains output-specific handler to be invoked by GenericParserHandler.go.
 */
+
+/*
+Third-level handler generating Production output in response to web request.
+Should be invoked by #converterHandler().
+*/
+
+// Esta funcion la tengo que modificar
+func handleProductionOutput(w http.ResponseWriter, r *http.Request, retStruct shared.ReturnStruct, dynamicOutput bool, produceIGExtendedOutput bool, includeAnnotations bool, outputType string, printHeaders bool, printIgScriptInput string) {
+
+	// Run default configuration
+	shared.SetDefaultConfig()
+	// Now, adjust to user settings based on UI output
+	// Define whether output is dynamic
+	Println("Setting dynamic output:", dynamicOutput)
+	tabular.SetDynamicOutput(dynamicOutput)
+	// Define whether output is IG Extended (component-level nesting)
+	Println("Setting IG Extended output:", produceIGExtendedOutput)
+	tabular.SetProduceIGExtendedOutput(produceIGExtendedOutput)
+	// Define whether annotations are included
+	Println("Setting annotations:", includeAnnotations)
+	tabular.SetIncludeAnnotations(includeAnnotations)
+	// Define whether header row is included
+	Println("Setting header row:", printHeaders)
+	tabular.SetIncludeHeaders(printHeaders)
+	// Output type
+	Println("Output type:", outputType)
+
+	// Make production output from Excel file
+	savePath, err2 := production.ConvertExcelToExcelWithTabularOutput(r)
+	if err2.ErrorCode != production.PRODUCTION_NO_ERROR {
+		retStruct.Success = false
+		retStruct.Error = true
+		retStruct.Message = "Error (" + err2.ErrorCode + "): " + err2.ErrorMessage
+		err3 := tmpl.ExecuteTemplate(w, TEMPLATE_NAME_PARSER_PRODUCTION, retStruct)
+		if err3 != nil {
+			log.Println("Error processing default template:", err3.Error())
+			http.Error(w, "Could not process request.", http.StatusInternalServerError)
+		}
+		// Final comment in log
+		Println("Error: " + fmt.Sprint(err2))
+		// Ensure logging is terminated
+		err := terminateOutput(ERROR_SUFFIX)
+		if err != nil {
+			log.Println("Error when finalizing log file: ", err.Error())
+		}
+		return
+	}
+
+	retStruct.Success = true
+	retStruct.Error = false
+	retStruct.Message = "Successfully saved: " + savePath
+	err3 := tmpl.ExecuteTemplate(w, TEMPLATE_NAME_PARSER_PRODUCTION, retStruct)
+	if err3 != nil {
+		log.Println("Error processing default template:", err3.Error())
+		http.Error(w, "Could not process request.", http.StatusInternalServerError)
+	}
+	// Final comment in log
+	Println("Success")
+	// Ensure logging is terminated
+	err := terminateOutput(SUCCESS_SUFFIX)
+	if err != nil {
+		log.Println("Error when finalizing log file: ", err.Error())
+
+		return
+	}
+}
 
 /*
 Third-level handler generating tabular output in response to web request.
