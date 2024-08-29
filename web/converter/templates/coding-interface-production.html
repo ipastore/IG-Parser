@@ -1,0 +1,215 @@
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IG Parser</title>
+  <link rel="icon" type="image/x-icon" href="/css/favicon.ico">
+  <link rel="shortcut icon" type="image/x-icon" href="/css/favicon.ico">
+  <link rel="stylesheet" href="/css/default.css">
+  <!-- ACE Editor -->
+  <script src="/libraries/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+</head>
+
+<body>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h1><a style="text-decoration:none" href="https://github.com/chrfrantz/IG-Parser" target="_blank">IG Parser</a></h1>
+<h2>A Parser for Institutional Statements encoded in the <a href="/help/" target="_blank">IG Script Notation</a> of the <a href="https://newinstitutionalgrammar.org" target="_blank">Institutional Grammar 2.0</a></h2>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<div class="form">
+  <form id="form"
+        enctype="multipart/form-data"
+        method="POST">
+      <script>
+          // Local storage
+
+          /*
+          Stores the editor content in browser local storage.
+           */
+          function saveFormContent() {
+              // Store encoded statement
+              let content = editor.getValue();
+              localStorage.setItem("codedStmt", content);
+              //console.log("Storing content " + content)
+
+              // Store raw statement
+              saveValue("rawStmt")
+
+              // Elements specific to distinctive versions;
+              // require checks for presence prior to saving
+
+              // Tabular-specific fields
+
+              // Statement ID
+              saveValue("stmtId")
+
+              // Extended output
+              saveCheckbox("igExtended")
+
+              // Logico output (both for tabular and visual)
+              saveCheckbox("annotations")
+
+              // Include headers
+              saveCheckbox("includeHeaders")
+
+              // Tabular output format
+              saveValue("outputType")
+
+              // Visual-specific fields
+
+              // Dov
+              saveCheckbox("dov")
+
+              // Include Property tree
+              saveCheckbox("propertyTree")
+
+              // Include Binary tree
+              saveCheckbox("binaryTree")
+
+              // Activation condition
+              saveCheckbox("actCondTop")
+
+              // Canvas height
+              saveValue("canvasHeight")
+
+              // Canvas width
+              saveValue("canvasWidth")
+
+          }
+
+          /*
+          Saves value of a given field into localStorage. Takes checkbox field ID (not value field) as input.
+           */
+          function saveCheckbox(fieldId) {
+              let tmpField = document.getElementById(fieldId);
+              if(tmpField != null) {
+                  localStorage.setItem(fieldId, tmpField.checked);
+                  //console.log("Storing content " + tmpField.checked)
+              }
+          }
+
+          /*
+          Saves value of a given field into localStorage. Takes value field ID (not checkbox field) as input.
+           */
+          function saveValue(fieldId) {
+              let tmpField = document.getElementById(fieldId);
+              if(tmpField != null) {
+                  localStorage.setItem(fieldId, tmpField.value);
+                  //console.log("Storing content " + tmpField.value)
+              }
+          }
+
+          /*
+          Loads the content stored in local storage into editor
+           */
+          function loadFormContent() {
+              // Load encoded statement if overriding of browser storage is not set
+              if ({{.OverrideSavedStmts}} === false) {
+                  // If value is stored ...
+                  if (localStorage.getItem("codedStmt") != null) {
+                      // ... populate editor content ...
+                      let content = localStorage.getItem("codedStmt");
+                      editor.setValue(content);
+                      // ... and update underlying text area
+                      copyEditorContentToTextArea();
+                      //console.log("Loading content " + content)
+                  }
+
+                  // Load raw statement
+                  loadValue("rawStmt")
+
+              }
+              // Tabular-specific fields
+
+              // Load statement ID
+              loadValue("stmtId")
+
+              // Load IG Extended
+              loadCheckbox("igExtended")
+
+              // Load IG Logico (Tabular and Visual)
+              loadCheckbox("annotations")
+
+              // Load Header setting
+              loadCheckbox("includeHeaders")
+
+              // Load Tabular output format
+              loadValue("outputType")
+
+              // Visual-specific fields
+
+              // Load Dov
+              loadCheckbox("dov")
+
+              // Load Property tree
+              loadCheckbox("propertyTree")
+
+              // Load Binary tree
+              loadCheckbox("binaryTree")
+
+              // Load Activation conditions
+              loadCheckbox("actCondTop")
+
+              // Load canvas height
+              loadValue("canvasHeight")
+
+              // Load canvas width
+              loadValue("canvasWidth")
+
+          }
+
+          /*
+          Loads field value from localStorage. Takes id of value field (i.e., not checkbox field) as input.
+           */
+          function loadValue(fieldId) {
+              if(localStorage.getItem(fieldId) != null && document.getElementById(fieldId) != null) {
+                  document.getElementById(fieldId).value = localStorage.getItem(fieldId);
+              }
+          }
+
+          /*
+          Loads checkbox field value from localStorage. Takes id of checkbox field (i.e., not value field) as input.
+           */
+          function loadCheckbox(fieldId) {
+              if(localStorage.getItem(fieldId) != null && document.getElementById(fieldId) != null) {
+                  let content = localStorage.getItem(fieldId);
+                  if(content === "true") {
+                      document.getElementById(fieldId).checked = true;
+                      //console.log("Loading content " + content)
+                  }
+                  if(content === "false") {
+                      document.getElementById(fieldId).checked = false;
+                      //console.log("Loading content " + content)
+                  }
+                  // nothing stored - leave value unchanged
+              }
+          }
+
+          /*
+          Resets fields to original default content
+           */
+          function resetContent() {
+              // Reset coded statement
+              editor.setValue({{.DefaultCodedStmt}})
+              // and copy back to hidden text area
+              copyEditorContentToTextArea();
+
+              // Reset raw statement
+              document.getElementById("rawStmt").value = {{.DefaultRawStmt}};
+
+              // Reset statement ID (if existing)
+              if(document.getElementById("stmtId") != null) {
+                  document.getElementById("stmtId").value = {{.DefaultStmtId}};
+              }
+
+
+              // Save Statement ID explicitly, since it does not display in visual mode and
+              // may otherwise not be saved using the saveFormContent()
+              localStorage.setItem("stmtId", {{.DefaultStmtId}});
+
+              // Save reset values in local storage
+              saveFormContent();
+          }
+
+      </script>
