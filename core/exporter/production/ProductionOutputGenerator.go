@@ -19,7 +19,7 @@ import (
 
 func ConvertExcelToExcelWithTabularOutput(r *http.Request) (string, ProductionError) {
 
-	// Upload file to uploads folder
+	// Upload file to library folder
 	filename, uploadPath, err := UploadExcelFile(r)
 	if err.ErrorCode != PRODUCTION_NO_ERROR {
 		return "", err
@@ -31,11 +31,11 @@ func ConvertExcelToExcelWithTabularOutput(r *http.Request) (string, ProductionEr
 		return "", err
 	}
 
-	// // Remove file from uploads folder
-	// err = RemoveFileFromUploads(uploadPath)
-	// if err.ErrorCode != PRODUCTION_NO_ERROR {
-	// 	return "", err
-	// }
+	// Remove file from library folder
+	err = RemoveTempFileFromLibrary(uploadPath)
+	if err.ErrorCode != PRODUCTION_NO_ERROR {
+		return "", err
+	}
 
 	return savePath, ProductionError{ErrorCode: PRODUCTION_NO_ERROR}
 }
@@ -75,7 +75,7 @@ func SearchCodedStatementIdx(header []string) ([]int, ProductionError) {
 
 }
 
-// Upload File to uploads
+// Upload File to Library
 func UploadExcelFile(r *http.Request) (string, string, ProductionError) {
 
 	// Parse the form
@@ -87,9 +87,20 @@ func UploadExcelFile(r *http.Request) (string, string, ProductionError) {
 			ErrorMessage: errorMsg}
 	}
 
-	// Create the uploads directory if it does not exist
-	if err := os.MkdirAll("./uploads", os.ModePerm); err != nil {
-		errorMsg := "Failed to create the uploads directory."
+	// Get the absolute path of the file
+	libraryDir, err := filepath.Abs(LIBRARY_DIRECTORY_NAME)
+	if err != nil {
+		errorMsg := "Failed to get the absolute path of the file."
+		log.Println(err.Error())
+		return "", "", ProductionError{
+			ErrorCode:    UPLOAD_SAVE_ERROR_GETTING_ABSOLUTE_PATH,
+			ErrorMessage: errorMsg}
+	}
+
+	// Create the Library directory if it does not exist
+	if err := os.MkdirAll(libraryDir,
+		os.ModePerm); err != nil {
+		errorMsg := "Failed to create the library directory."
 		log.Println(err.Error())
 		return "", "", ProductionError{
 			ErrorCode:    UPLOAD_SAVE_ERROR_CREATING_TEMP_FOLDER,
@@ -132,8 +143,10 @@ func UploadExcelFile(r *http.Request) (string, string, ProductionError) {
 			ErrorMessage: errorMsg}
 	}
 
+	// Get the absolute path of the file
+	uploadPath := filepath.Join(libraryDir, filename)
+
 	// Create the file
-	uploadPath := "./uploads/" + filename
 	newFile, err := os.Create(uploadPath)
 	if err != nil {
 		errorMsg := "Failed to create the file."
@@ -151,7 +164,7 @@ func UploadExcelFile(r *http.Request) (string, string, ProductionError) {
 		}
 	}()
 
-	// Copy the input file to the temp file in uploads
+	// Copy the input file to the temp file in the library
 	if _, err := io.Copy(newFile, file); err != nil {
 		errorMsg := "Failed to copy the file."
 		log.Println(err.Error())
@@ -167,18 +180,19 @@ func UploadExcelFile(r *http.Request) (string, string, ProductionError) {
 // Save File
 func SavExcelizeFile(file *excelize.File, filename string) (string, ProductionError) {
 
-	// Create the coded directory if it does not exist
-	if err := os.MkdirAll("./coded", os.ModePerm); err != nil {
-		errorMsg := "Failed to create the coded directory."
-		log.Println(err.Error())
-		return "", ProductionError{
-			ErrorCode:    UPLOAD_SAVE_ERROR_CREATING_TEMP_FOLDER,
-			ErrorMessage: errorMsg}
-	}
-
 	// Get the name, and append CODED to it
 	saveAsFilename := strings.TrimSuffix(filename, filepath.Ext(filename)) + "_CODED.xlsx"
-	savePath := "./coded/" + saveAsFilename
+	// Get the absolute path of the file
+	savePath, err := filepath.Abs(filepath.Join(
+		LIBRARY_DIRECTORY_NAME,
+		saveAsFilename))
+	if err != nil {
+		errorMsg := "Failed to get the absolute path of the file."
+		log.Println(err.Error())
+		return "", ProductionError{
+			ErrorCode:    UPLOAD_SAVE_ERROR_GETTING_ABSOLUTE_PATH,
+			ErrorMessage: errorMsg}
+	}
 
 	// Save the file
 	if err := file.SaveAs(savePath); err != nil {
@@ -192,11 +206,11 @@ func SavExcelizeFile(file *excelize.File, filename string) (string, ProductionEr
 	return savePath, ProductionError{ErrorCode: PRODUCTION_NO_ERROR}
 }
 
-// Remove file from /uploads
-func RemoveFileFromUploads(uploadPath string) ProductionError {
-	// Erase the file from uploads
+// Remove file from Library
+func RemoveTempFileFromLibrary(uploadPath string) ProductionError {
+
 	if err := os.Remove(uploadPath); err != nil {
-		errorMsg := "Failed to remove the file from uploads."
+		errorMsg := "Failed to remove the file from library."
 		log.Println(err.Error())
 		return ProductionError{
 			ErrorCode:    REMOVE_ERROR_ERASING_FILE,

@@ -61,6 +61,9 @@ const PROCESS_ERROR_SETTING_ROW = "ERROR_SETTING_ROW"
 // Indicates error in flushing the streamwriter
 const PROCESS_ERROR_FLUSHING_STREAMWRITER = "ERROR_FLUSHING_STREAMWRITER"
 
+// Indicates error in getting the absolute path of the file when uploading or saving
+const UPLOAD_SAVE_ERROR_GETTING_ABSOLUTE_PATH = "ERROR_GETTING_ABSOLUTE_PATH"
+
 /*
 Error type signaling errors during the upload process
 */

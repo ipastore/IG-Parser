@@ -3,7 +3,6 @@ package main
 import (
 	"IG-Parser/core/endpoints"
 	"IG-Parser/core/exporter/tabular"
-	"IG-Parser/core/tree"
 	"fmt"
 )
 
@@ -58,26 +57,32 @@ func mainWorkbench() {
 	//text = "Bdir{A2,p(first) A1(farmer) [OR] A2(citizen)}"
 	//text = "{A(sdkjls) Bdir((LFT [XOR] RHT)) [OR] A(ertyu) I(dgsdkjg)}"
 
-	// Multi-level nesting
-	text = "A(actor1) I(aim1) Bdir{A(actor2) I(aim2) Cac{   Cac{A(actor3) I(aim3) Bdir(something)  }   [OR]   Cac{  A(actor4) I(aim4) Bdir(something else)  }}} dfghj" +
-		" Cac{ Cac{A(precond2) I(dksjld)} [XOR] Cac{A(ldkjsjg) I(sdgjls)}} " +
-		"{ Cac{A(precond2) I(dksjld)} [XOR] Cac{A(ldkjsjg) I(sdgjls)}}"
+	// // Multi-level nesting
+	// text = "A(actor1) I(aim1) Bdir{A(actor2) I(aim2) Cac{   Cac{A(actor3) I(aim3) Bdir(something)  }   [OR]   Cac{  A(actor4) I(aim4) Bdir(something else)  }}} dfghj" +
+	// 	" Cac{ Cac{A(precond2) I(dksjld)} [XOR] Cac{A(ldkjsjg) I(sdgjls)}} " +
+	// 	"{ Cac{A(precond2) I(dksjld)} [XOR] Cac{A(ldkjsjg) I(sdgjls)}}"
 
-	tabular.SetIncludeSharedElementsInTabularOutput(true)
-	tabular.SetDynamicOutput(false)
+	// tabular.SetIncludeSharedElementsInTabularOutput(true)
+	// tabular.SetDynamicOutput(false)
 
-	fmt.Println("Shared mode:")
-	fmt.Println(tree.SHARED_ELEMENT_INHERITANCE_MODE)
+	// fmt.Println("Shared mode:")
+	// fmt.Println(tree.SHARED_ELEMENT_INHERITANCE_MODE)
 
-	tree.SetFlatPrinting(true)
+	// tree.SetFlatPrinting(true)
 
 	/*_, err := parser.ParseStatement(text)
 	if err.ErrorCode != tree.PARSING_NO_ERROR {
 		log.Fatal(err.Error())
 	}*/
 
-	endpoints.ConvertIGScriptToTabularOutput("", text, "1.1", tabular.OUTPUT_TYPE_CSV, "example.csv", true, true, tabular.ORIGINAL_STATEMENT_OUTPUT_NONE, tabular.IG_SCRIPT_OUTPUT_NONE)
+	output, _ := endpoints.ConvertIGScriptToTabularOutput("", text, "1.1", tabular.OUTPUT_TYPE_CSV, "example.csv", true, true, tabular.ORIGINAL_STATEMENT_OUTPUT_NONE, tabular.IG_SCRIPT_OUTPUT_NONE)
 
-	//fmt.Println(output)
+	fmt.Println(output)
 
+}
+
+// The main function
+func main() {
+	// Call the mainWorkbench function
+	mainWorkbench()
 }
