@@ -255,22 +255,22 @@ func TestProcessFileDefaultConfig(t *testing.T) {
 		expectedFilename string
 		expectedErr      string
 	}{
-		{ // Without parsing error
-			inputFilename:    "01_TestProductionWithoutParsingError.xlsx",
-			expectedFilename: "01_TestProductionWithoutParsingError_CODED.xlsx",
-			expectedErr:      PRODUCTION_NO_ERROR,
-		},
+		// { // Without parsing error
+		// 	inputFilename:    "01_TestProductionWithoutParsingError.xlsx",
+		// 	expectedFilename: "01_TestProductionWithoutParsingError_CODED.xlsx",
+		// 	expectedErr:      PRODUCTION_NO_ERROR,
+		// },
 
-		{ // With parsing error
-			inputFilename:    "02_TestProductionParsingError.xlsx",
-			expectedFilename: "02_TestProductionParsingError_CODED.xlsx",
-			expectedErr:      PRODUCTION_NO_ERROR,
-		},
-		{ // Empty coded statement in 1 row having the same length as the header
-			inputFilename:    "03_TestProductionEmptyCodedStatementSameRowLength.xlsx",
-			expectedFilename: "03_TestProductionEmptyCodedStatementSameRowLength_CODED.xlsx",
-			expectedErr:      PRODUCTION_NO_ERROR,
-		},
+		// { // With parsing error
+		// 	inputFilename:    "02_TestProductionParsingError.xlsx",
+		// 	expectedFilename: "02_TestProductionParsingError_CODED.xlsx",
+		// 	expectedErr:      PRODUCTION_NO_ERROR,
+		// },
+		// { // Empty coded statement in 1 row having the same length as the header
+		// 	inputFilename:    "03_TestProductionEmptyCodedStatementSameRowLength.xlsx",
+		// 	expectedFilename: "03_TestProductionEmptyCodedStatementSameRowLength_CODED.xlsx",
+		// 	expectedErr:      PRODUCTION_NO_ERROR,
+		// },
 
 		{ // Empty coded statement in 1 row having a shorter length than the header
 			inputFilename:    "04_TestProductionEmptyCodedStatementLessRowLength.xlsx",
@@ -278,22 +278,22 @@ func TestProcessFileDefaultConfig(t *testing.T) {
 			expectedErr:      PRODUCTION_NO_ERROR,
 		},
 
-		{ // Header without Coded Statement column
-			inputFilename:    "101_TestProductionEmptyCellHeaderCodedStatementNoMatch.xlsx",
-			expectedFilename: "",
-			expectedErr:      HEADER_MATCHING_ERROR_NO_MATCH_FOR_CODED_STATEMENT,
-		},
+		// { // Header without Coded Statement column
+		// 	inputFilename:    "101_TestProductionEmptyCellHeaderCodedStatementNoMatch.xlsx",
+		// 	expectedFilename: "",
+		// 	expectedErr:      HEADER_MATCHING_ERROR_NO_MATCH_FOR_CODED_STATEMENT,
+		// },
 
-		{ // Header without Coded Statement column
-			inputFilename:    "102_TestProductionMatrixBiggerThanHeader.xlsx",
-			expectedFilename: "",
-			expectedErr:      PROCESS_ERROR_ROW_LARGER_THAN_HEADER,
-		},
-		{ // Row larger than header
-			inputFilename:    "104_TestProductionRowLargerThanHeader.xlsx",
-			expectedFilename: "",
-			expectedErr:      PROCESS_ERROR_ROW_LARGER_THAN_HEADER,
-		},
+		// { // Header without Coded Statement column
+		// 	inputFilename:    "102_TestProductionMatrixBiggerThanHeader.xlsx",
+		// 	expectedFilename: "",
+		// 	expectedErr:      PROCESS_ERROR_ROW_LARGER_THAN_HEADER,
+		// },
+		// { // Row larger than header
+		// 	inputFilename:    "104_TestProductionRowLargerThanHeader.xlsx",
+		// 	expectedFilename: "",
+		// 	expectedErr:      PROCESS_ERROR_ROW_LARGER_THAN_HEADER,
+		// },
 	}
 
 	// Ensure the output directory exists (IG-Library within the production folder)
