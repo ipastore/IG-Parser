@@ -4,6 +4,7 @@ import (
 	"IG-Parser/core/endpoints"
 	"IG-Parser/core/exporter/tabular"
 	"IG-Parser/core/tree"
+	"IG-Parser/web/converter/shared"
 	"fmt"
 	"io"
 	"log"
@@ -19,7 +20,7 @@ import (
 
 func ConvertExcelToExcelWithTabularOutput(r *http.Request) (string, ProductionError) {
 
-	// Upload file to library folder
+	// Upload file to IG-library folder
 	filename, uploadPath, err := UploadExcelFile(r)
 	if err.ErrorCode != PRODUCTION_NO_ERROR {
 		return "", err
@@ -27,12 +28,6 @@ func ConvertExcelToExcelWithTabularOutput(r *http.Request) (string, ProductionEr
 
 	// Process file
 	savePath, err := ProcessExcelFile(uploadPath, filename)
-	if err.ErrorCode != PRODUCTION_NO_ERROR {
-		return "", err
-	}
-
-	// Remove file from library folder
-	err = RemoveTempFileFromLibrary(uploadPath)
 	if err.ErrorCode != PRODUCTION_NO_ERROR {
 		return "", err
 	}
@@ -102,7 +97,7 @@ func UploadExcelFile(r *http.Request) (string, string, ProductionError) {
 		errorMsg := "Failed to create the library directory."
 		log.Println(err.Error())
 		return "", "", ProductionError{
-			ErrorCode:    UPLOAD_SAVE_ERROR_CREATING_TEMP_FOLDER,
+			ErrorCode:    UPLOAD_SAVE_ERROR_CREATING_LIBRARY_FOLDER,
 			ErrorMessage: errorMsg}
 	}
 
@@ -205,20 +200,6 @@ func SavExcelizeFile(file *excelize.File, filename string) (string, ProductionEr
 	return savePath, ProductionError{ErrorCode: PRODUCTION_NO_ERROR}
 }
 
-// Remove file from Library
-func RemoveTempFileFromLibrary(uploadPath string) ProductionError {
-
-	if err := os.Remove(uploadPath); err != nil {
-		errorMsg := "Failed to remove the file from library."
-		log.Println(err.Error())
-		return ProductionError{
-			ErrorCode:    REMOVE_ERROR_ERASING_FILE,
-			ErrorMessage: errorMsg}
-	}
-
-	return ProductionError{ErrorCode: PRODUCTION_NO_ERROR}
-}
-
 // Process excel file with Excelize and the engine of the parser
 
 func ProcessExcelFile(uploadPath string, filename string) (string, ProductionError) {
@@ -264,10 +245,11 @@ func ProcessExcelFile(uploadPath string, filename string) (string, ProductionErr
 			ErrorMessage: errorMsg}
 	}
 
-	// Initialize stmtID , rowCoordinate and codedStatementColumn
+	// Initialize stmtID , rowCoordinate , codedStatementColumn and headerLen
 	stmtId := "1"
 	rowCoordinate := 1
 	var codedStatementColumn int
+	headerLen := len(matrix[0])
 
 	// Loop through the rows of the matrix
 	for r, rowMatrix := range matrix {
@@ -277,10 +259,20 @@ func ProcessExcelFile(uploadPath string, filename string) (string, ProductionErr
 		rowToWriteInterface := make([]interface{}, 0)
 		// Interface to catch the parsing error from the parser
 		errorMessageInterface := make([]interface{}, 1)
-		//Interface to catch the existing row
-		rowMatrixInterface := make([]interface{}, len(matrix[0]))
+		//Interface to catch the existing row. Maximum length is the length of the
+		rowMatrixInterface := make([]interface{}, headerLen)
 
-		// Copy to 2D matrix to interface
+		// // Catch error of len of rows greater than header
+		err := len(rowMatrix) > headerLen
+		if err {
+			errorMsg := "The number of columns in the row is greater than the number of columns in the header"
+			return "", ProductionError{
+				ErrorCode:    PROCESS_ERROR_ROW_LARGER_THAN_HEADER,
+				ErrorMessage: errorMsg,
+			}
+		}
+
+		// Copy to matrix to interface
 		for i, v := range rowMatrix {
 			rowMatrixInterface[i] = v
 		}
@@ -358,6 +350,9 @@ func ProcessExcelFile(uploadPath string, filename string) (string, ProductionErr
 				printHeaders is indifferent, printIgScriptInput is indifferent.
 			*/
 
+			// Catch the error of the empty coded statement
+			// if codedStatementColumn == l-1{
+
 			// Get the output of the parsing. err2 is of type tree.ParsingError
 			output, err2 := endpoints.ConvertIGScriptToTabularOutput("", rowMatrix[codedStatementColumn], stmtId, tabular.OUTPUT_TYPE_CSV,
 				"", false, tabular.IncludeHeader(), tabular.ORIGINAL_STATEMENT_OUTPUT_NONE, tabular.DEFAULT_IG_SCRIPT_OUTPUT)
@@ -365,8 +360,13 @@ func ProcessExcelFile(uploadPath string, filename string) (string, ProductionErr
 			// Catching the parsing error and store it in the interface. If there is a error, print the error and continue to the next row
 			// If there is no error: print OK and print the output of the parsing
 			if err2.ErrorCode != tree.PARSING_NO_ERROR {
+				if rowMatrix[codedStatementColumn] == "" {
+					errorMessageInterface[0] = shared.ERROR_INPUT_NO_STATEMENT
+				} else {
 
-				errorMessageInterface[0] = err2.ErrorMessage
+					errorMessageInterface[0] = err2.ErrorMessage
+				}
+
 				rowToWriteInterface = append(rowMatrixInterface, errorMessageInterface)
 
 				// Get the coordinates of the cell to write
@@ -456,6 +456,15 @@ func ProcessExcelFile(uploadPath string, filename string) (string, ProductionErr
 	savePath, err1 := SavExcelizeFile(file, filename)
 	if err1.ErrorCode != PRODUCTION_NO_ERROR {
 		return "", err1
+	}
+
+	// Remove temp file from Library
+	if err := os.Remove(uploadPath); err != nil {
+		errorMsg := "Failed to remove the file from library."
+		log.Println(err.Error())
+		return "", ProductionError{
+			ErrorCode:    REMOVE_ERROR_ERASING_FILE,
+			ErrorMessage: errorMsg}
 	}
 
 	return savePath, ProductionError{ErrorCode: PRODUCTION_NO_ERROR}

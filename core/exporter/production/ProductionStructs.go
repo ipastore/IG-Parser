@@ -32,7 +32,7 @@ const UPLOAD_ERROR_COPYING_FILE = "ERROR_COPYING_FILE"
 const PRODUCTION_NO_ERROR = "PRODUCTION_NO_ERROR"
 
 // Indicates error in creating the folder whether in upload or saving
-const UPLOAD_SAVE_ERROR_CREATING_TEMP_FOLDER = "ERROR_CREATING_TEMP_FOLDER"
+const UPLOAD_SAVE_ERROR_CREATING_LIBRARY_FOLDER = "ERROR_CREATING_LIBRARY_FOLDER"
 
 // Indicates error in saving the file
 const SAVE_ERROR_SAVING_FILE = "ERROR_SAVING_FILE"
@@ -64,6 +64,9 @@ const PROCESS_ERROR_FLUSHING_STREAMWRITER = "ERROR_FLUSHING_STREAMWRITER"
 // Indicates error in getting the absolute path of the file when uploading or saving
 const UPLOAD_SAVE_ERROR_GETTING_ABSOLUTE_PATH = "ERROR_GETTING_ABSOLUTE_PATH"
 
+// Indicates error in getting and index out of range when processing the excel file
+const PROCESS_ERROR_ROW_LARGER_THAN_HEADER = "ERROR_ROW_LARGER_THAN_HEADER"
+
 /*
 Error type signaling errors during the upload process
 */
@@ -73,5 +76,5 @@ type ProductionError struct {
 }
 
 func (e *ProductionError) Error() error {
-	return errors.New("Production Error " + e.ErrorCode + ": " + e.ErrorMessage)
+	return errors.New("Production Error: " + e.ErrorCode + ". " + e.ErrorMessage)
 }

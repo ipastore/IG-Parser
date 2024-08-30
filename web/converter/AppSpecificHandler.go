@@ -46,7 +46,7 @@ func handleProductionOutput(w http.ResponseWriter, r *http.Request, retStruct sh
 	if err2.ErrorCode != production.PRODUCTION_NO_ERROR {
 		retStruct.Success = false
 		retStruct.Error = true
-		retStruct.Message = "Error (" + err2.ErrorCode + "): " + err2.ErrorMessage
+		retStruct.Message = err2.Error().Error()
 		err3 := tmpl.ExecuteTemplate(w, TEMPLATE_NAME_PARSER_PRODUCTION, retStruct)
 		if err3 != nil {
 			log.Println("Error processing default template:", err3.Error())
