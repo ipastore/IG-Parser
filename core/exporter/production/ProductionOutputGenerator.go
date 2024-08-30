@@ -365,7 +365,33 @@ func ProcessExcelFile(uploadPath string, filename string) (string, ProductionErr
 			*/
 
 			// Catch the error of the empty coded statement
-			// if codedStatementColumn == l-1{
+			if codedStatementColumn > len(rowMatrix)-1 {
+				errorMessageInterface[0] = shared.ERROR_INPUT_NO_STATEMENT
+
+				rowToWriteInterface = append(rowMatrixInterface, errorMessageInterface)
+
+				// Get the coordinates of the cell to write
+				coordinateCell, err := excelize.CoordinatesToCellName(1, rowCoordinate)
+				if err != nil {
+					errorMsg := "Failed to convert coordinates to cell name."
+					log.Println(err.Error())
+					return "", ProductionError{
+						ErrorCode:    PROCESS_ERROR_COORDINATE_CONVERSION,
+						ErrorMessage: errorMsg,
+					}
+				}
+				// Set the row in the coordinate cell with the streamwriter
+				if err := sw.SetRow(coordinateCell, rowToWriteInterface); err != nil {
+					errorMsg := "Failed to set the row with the streamwriter."
+					log.Println(err.Error())
+					return "", ProductionError{
+						ErrorCode:    PROCESS_ERROR_SETTING_ROW,
+						ErrorMessage: errorMsg,
+					}
+				}
+				rowCoordinate += 1
+				continue
+			}
 
 			// Get the output of the parsing. err2 is of type tree.ParsingError
 			output, err2 := endpoints.ConvertIGScriptToTabularOutput("", rowMatrix[codedStatementColumn], stmtId, tabular.OUTPUT_TYPE_CSV,
