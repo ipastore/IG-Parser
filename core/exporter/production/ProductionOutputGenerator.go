@@ -40,8 +40,7 @@ func ConvertExcelToExcelWithTabularOutput(r *http.Request) (string, ProductionEr
 	return savePath, ProductionError{ErrorCode: PRODUCTION_NO_ERROR}
 }
 
-// helpers to write the file etc
-// I need to call this functionn within this package in ProductionOutputGenerator.go
+// Regex to search for Coded Statement Column Index in the header
 func SearchCodedStatementIdx(header []string) ([]int, ProductionError) {
 	var indexes []int
 

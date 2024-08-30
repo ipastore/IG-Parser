@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IG Parser</title>
+  <link rel="icon" type="image/x-icon" href="/css/favicon.ico">
+  <link rel="shortcut icon" type="image/x-icon" href="/css/favicon.ico">
+  <link rel="stylesheet" href="/css/default.css">
+  
+  <script src="/libraries/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+</head>
+
+<body>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h1><a style="text-decoration:none" href="https://github.com/chrfrantz/IG-Parser" target="_blank">IG Parser</a></h1>
+<h2>A Parser for Institutional Statements encoded in the <a href="/help/" target="_blank">IG Script Notation</a> of the <a href="https://newinstitutionalgrammar.org" target="_blank">Institutional Grammar 2.0</a></h2>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<div class="form">
+  <form id="form"
+        enctype="multipart/form-data"
+        method="POST">
+      <script>
+          
+
+          
+
+          function saveFormContent() {
+              
+              let content = editor.getValue();
+              localStorage.setItem("codedStmt", content);
+              
+
+              
+              saveValue("rawStmt")
+
+              
+              
+
+              
+
+              
+              saveValue("stmtId")
+
+              
+              saveCheckbox("igExtended")
+
+              
+              saveCheckbox("annotations")
+
+              
+              saveCheckbox("includeHeaders")
+
+              
+              saveValue("outputType")
+
+              
+
+              
+              saveCheckbox("dov")
+
+              
+              saveCheckbox("propertyTree")
+
+              
+              saveCheckbox("binaryTree")
+
+              
+              saveCheckbox("actCondTop")
+
+              
+              saveValue("canvasHeight")
+
+              
+              saveValue("canvasWidth")
+
+          }
+
+          
+
+          function saveCheckbox(fieldId) {
+              let tmpField = document.getElementById(fieldId);
+              if(tmpField != null) {
+                  localStorage.setItem(fieldId, tmpField.checked);
+                  
+              }
+          }
+
+          
+
+          function saveValue(fieldId) {
+              let tmpField = document.getElementById(fieldId);
+              if(tmpField != null) {
+                  localStorage.setItem(fieldId, tmpField.value);
+                  
+              }
+          }
+
+          
+
+          function loadFormContent() {
+              
+              if ( false  === false) {
+                  
+                  if (localStorage.getItem("codedStmt") != null) {
+                      
+                      let content = localStorage.getItem("codedStmt");
+                      editor.setValue(content);
+                      
+                      copyEditorContentToTextArea();
+                      
+                  }
+
+                  
+                  loadValue("rawStmt")
+
+              }
+              
+
+              
+              loadValue("stmtId")
+
+              
+              loadCheckbox("igExtended")
+
+              
+              loadCheckbox("annotations")
+
+              
+              loadCheckbox("includeHeaders")
+
+              
+              loadValue("outputType")
+
+              
+
+              
+              loadCheckbox("dov")
+
+              
+              loadCheckbox("propertyTree")
+
+              
+              loadCheckbox("binaryTree")
+
+              
+              loadCheckbox("actCondTop")
+
+              
+              loadValue("canvasHeight")
+
+              
+              loadValue("canvasWidth")
+
+          }
+
+          
+
+          function loadValue(fieldId) {
+              if(localStorage.getItem(fieldId) != null && document.getElementById(fieldId) != null) {
+                  document.getElementById(fieldId).value = localStorage.getItem(fieldId);
+              }
+          }
+
+          
+
+          function loadCheckbox(fieldId) {
+              if(localStorage.getItem(fieldId) != null && document.getElementById(fieldId) != null) {
+                  let content = localStorage.getItem(fieldId);
+                  if(content === "true") {
+                      document.getElementById(fieldId).checked = true;
+                      
+                  }
+                  if(content === "false") {
+                      document.getElementById(fieldId).checked = false;
+                      
+                  }
+                  
+              }
+          }
+
+          
+
+          function resetContent() {
+              
+              editor.setValue("Cac{Once E(policy) F(comes into force)} A,p(relevant) A(regulators) D(must) I(monitor [AND] enforce) Bdir(compliance).")
+              
+              copyEditorContentToTextArea();
+
+              
+              document.getElementById("rawStmt").value = "Once policy comes into force, relevant regulators must monitor and enforce compliance.";
+
+              
+              if(document.getElementById("stmtId") != null) {
+                  document.getElementById("stmtId").value = "123";
+              }
+
+
+              
+              
+              localStorage.setItem("stmtId", "123");
+
+              
+              saveFormContent();
+          }
+
+      </script>
+
+
+
+     <span data-text=""><a href="/visual/" onclick="saveFormContent()">Switch to visual version of IG Parser</a></span><br /><br />
+     <span data-text=""><a href="/" onclick="saveFormContent()">Switch to tabular version of IG Parser</a></span><br /><br />
+     
+     
+     <span data-text="This section includes specific customizations for the output generation, which affect the generated output. Where larger numbers of statements are encoded for analytical purposes, ensure the consistent parameterization for all generated statements." class="tooltip">Parameters:</span>
+     
+     <span data-text="Indicates whether the IG Script-encoded statement is included in the output by introducing an additional column following the Statement ID (or the Original Statement if activated). Choices include the exclusion (no additional column), the inclusion for the first atomic statement only (i.e., first row following the header row), or the inclusion for all atomic statements (i.e., each row)." class="tooltip">Inclusion of IG Script-encoded statement in generated output:</span>
+     <select id="printIgScript" name="printIgScript" type="select">
+         
+         <option value="No inclusion of IG Script coding in output (i.e., no additional column)" selected="selected">No inclusion of IG Script coding in output (i.e., no additional column)</option>
+         
+         <option value="Include IG Script-encoded statement for first atomic statement only (i.e., in first row following optional header row)" >Include IG Script-encoded statement for first atomic statement only (i.e., in first row following optional header row)</option>
+         
+         <option value="Include IG Script-encoded statement for each atomic statement (i.e., in each row)" >Include IG Script-encoded statement for each atomic statement (i.e., in each row)</option>
+         
+     </select>
+     
+     <input id="igExtended" name="igExtended" type="checkbox" unchecked /><label for="igExtended">Produce IG Extended output (component-level nesting) (default: off)</label>
+     <input id="annotations" name="annotations" type="checkbox" unchecked /><label for="annotations">Include IG Logico annotations in output (default: off)</label>
+     
+     
+     <input class="input file-input" type="file" name="file"/>
+     <input value="Send file to parse" onclick="saveFormContent()" type="submit">
+
+
+
+<p>Version: 0.6</p>
+
+</form>
+</div>
+
+</body>
+
+</html>

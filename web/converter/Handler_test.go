@@ -621,3 +621,59 @@ func TestConverterHandlerCSVPostWithoutHeaders(t *testing.T) {
 	}
 
 }
+
+/*
+Tests GET request for production output
+*/
+func TestConverterHandlerProductionGet(t *testing.T) {
+
+	// Initialize templates
+	Init()
+	// Deactivate logging
+	Logging = false
+	// Spin up server
+	server := httptest.NewServer(http.HandlerFunc(ConverterHandlerProduction))
+	// Tear down at the end of the function
+	defer server.Close()
+
+	// Read server information
+	client := http.Client{}
+	res, err := client.Get(server.URL)
+	if err != nil {
+		t.Fatal("Error when performing HTTP request. Error:", err.Error())
+	}
+
+	if res.Status != "200 OK" {
+		t.Fatal("Request returning non-200 status code: " + res.Status)
+	}
+
+	output, err2 := io.ReadAll(res.Body)
+	if err2 != nil {
+		t.Fatal("Error when reading response. Error:", err2.Error())
+	}
+
+	outputString := string(output)
+
+	// Convert output to \n linebreaks only (may contain a mix) - for OS-independent comparison
+	outputString = strings.ReplaceAll(outputString, "\\r\\n", "\\n")
+
+	// Read reference file
+	content, err5 := os.ReadFile("TestConverterHandlerProductionGet.test")
+	if err5 != nil {
+		t.Fatal("Error attempting to read test text input. Error:", err5.Error())
+	}
+
+	expectedOutput := string(content)
+
+	// Compare to actual output
+	if outputString != expectedOutput {
+		fmt.Println("Produced output:\n", outputString)
+		fmt.Println("Expected output:\n", expectedOutput)
+		err6 := tabular.WriteToFile(errorFile, outputString, true)
+		if err6 != nil {
+			t.Fatal("Error attempting to write error file. Error:", err6.Error())
+		}
+		t.Fatal("Output generation is wrong for given input statement. Wrote output to '" + errorFile + "'")
+	}
+
+}
