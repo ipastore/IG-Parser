@@ -32,6 +32,15 @@ func ConvertExcelToExcelWithTabularOutput(r *http.Request) (string, ProductionEr
 		return "", err
 	}
 
+	// Remove temp file from Library
+	if err := os.Remove(uploadPath); err != nil {
+		errorMsg := "Failed to remove the file from library."
+		log.Println(err.Error())
+		return "", ProductionError{
+			ErrorCode:    REMOVE_ERROR_ERASING_FILE,
+			ErrorMessage: errorMsg}
+	}
+
 	return savePath, ProductionError{ErrorCode: PRODUCTION_NO_ERROR}
 }
 
@@ -458,14 +467,14 @@ func ProcessExcelFile(uploadPath string, filename string) (string, ProductionErr
 		return "", err1
 	}
 
-	// Remove temp file from Library
-	if err := os.Remove(uploadPath); err != nil {
-		errorMsg := "Failed to remove the file from library."
-		log.Println(err.Error())
-		return "", ProductionError{
-			ErrorCode:    REMOVE_ERROR_ERASING_FILE,
-			ErrorMessage: errorMsg}
-	}
+	// // Remove temp file from Library
+	// if err := os.Remove(uploadPath); err != nil {
+	// 	errorMsg := "Failed to remove the file from library."
+	// 	log.Println(err.Error())
+	// 	return "", ProductionError{
+	// 		ErrorCode:    REMOVE_ERROR_ERASING_FILE,
+	// 		ErrorMessage: errorMsg}
+	// }
 
 	return savePath, ProductionError{ErrorCode: PRODUCTION_NO_ERROR}
 }

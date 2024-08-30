@@ -3,6 +3,10 @@ package production
 import (
 	"IG-Parser/core/exporter/tabular"
 	"IG-Parser/web/converter/shared"
+	"bytes"
+	"io"
+	"mime/multipart"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -456,5 +460,99 @@ func TestProcessFileDefaultConfig(t *testing.T) {
 	}
 	if err := os.RemoveAll(outputDir); err != nil {
 		t.Fatalf("Failed to remove output file: %v", err)
+	}
+}
+
+func TestUploadExcelFile(t *testing.T) {
+	tests := []struct {
+		inputFilename string
+		expectedErr   string
+	}{
+		{
+			inputFilename: "01_TestProductionWithoutParsingError.xlsx",
+			expectedErr:   PRODUCTION_NO_ERROR,
+		},
+
+		// {
+		// 	inputFilename: "201_TestProductionParsingError.xlsx",
+		// 	expectedErr:   UPLOAD_ERROR_NOT_EXCEL_FILE,
+		// },
+	}
+
+	for _, test := range tests {
+
+		inputFilename := test.inputFilename
+		expectedErr := test.expectedErr
+
+		// Get path of the input file
+		inputPath := filepath.Join(
+			"testing", "input", inputFilename)
+		inputPath, err := filepath.Abs(inputPath)
+		if err != nil {
+			t.Fatalf("Failed to get absolute path of input file: %v", err)
+		}
+
+		// Create a new HTTP request
+		req, err := http.NewRequest("POST", "/upload", nil)
+		if err != nil {
+			t.Fatalf("Failed to create HTTP request: %v", err)
+		}
+
+		// Create a new multipart form
+		body := &bytes.Buffer{}
+		writer := multipart.NewWriter(body)
+
+		// Create a new file part
+		fileWriter, err := writer.CreateFormFile("file", inputPath)
+		if err != nil {
+			t.Fatalf("Failed to create form file: %v", err)
+		}
+
+		// Open the test file
+		file, err := os.Open(inputFilename)
+		if err != nil {
+			t.Fatalf("Failed to open test file: %v", err)
+		}
+		defer file.Close()
+
+		// Copy the file contents to the file part
+		_, err = io.Copy(fileWriter, file)
+		if err != nil {
+			t.Fatalf("Failed to copy file contents: %v", err)
+		}
+
+		// Close the multipart writer
+		err = writer.Close()
+		if err != nil {
+			t.Fatalf("Failed to close multipart writer: %v", err)
+		}
+
+		// Set the request body and content type
+		req.Body = io.NopCloser(body)
+		req.Header.Set("Content-Type", writer.FormDataContentType())
+
+		// Call the UploadExcelFile function
+		filename, uploadPath, err1 := UploadExcelFile(req)
+		if err1.ErrorCode != expectedErr {
+			t.Errorf("UploadExcelFile returned an error: %v", err)
+		}
+
+		// Check if the filename and uploadPath are not empty
+		if filename == "" {
+			t.Errorf("UploadExcelFile returned an empty filename")
+		}
+		if uploadPath == "" {
+			t.Errorf("UploadExcelFile returned an empty uploadPath")
+		}
+
+		// Check if the uploaded file exists
+		if _, err := os.Stat(uploadPath); os.IsNotExist(err) {
+			t.Errorf("Uploaded file does not exist: %s", uploadPath)
+		}
+
+		// Clean up: remove the uploaded file
+		if err := os.Remove(uploadPath); err != nil {
+			t.Fatalf("Failed to remove uploaded file: %v", err)
+		}
 	}
 }
