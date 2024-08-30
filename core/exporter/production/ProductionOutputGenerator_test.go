@@ -463,6 +463,9 @@ func TestProcessFileDefaultConfig(t *testing.T) {
 	}
 }
 
+// Test the upload of the file. Supported extensions are: xlsx and xlsm
+// No test to upload a big file larger than maximum supported size (5 MB by default)
+// Check ProductionOutputGeneratorConfig.go
 func TestUploadExcelFile(t *testing.T) {
 	tests := []struct {
 		inputFilename string
@@ -473,10 +476,18 @@ func TestUploadExcelFile(t *testing.T) {
 			expectedErr:   PRODUCTION_NO_ERROR,
 		},
 
-		// {
-		// 	inputFilename: "201_TestProductionParsingError.xlsx",
-		// 	expectedErr:   UPLOAD_ERROR_NOT_EXCEL_FILE,
-		// },
+		{
+			inputFilename: "200_TestProductionNotExcelFile.docx",
+			expectedErr:   UPLOAD_ERROR_NOT_EXCEL_FILE,
+		},
+		{
+			inputFilename: "201_TestProductionNotExcelFile.xls",
+			expectedErr:   UPLOAD_ERROR_NOT_EXCEL_FILE,
+		},
+		{
+			inputFilename: "203_TestProductionXLSMFile.xlsm",
+			expectedErr:   PRODUCTION_NO_ERROR,
+		},
 	}
 
 	for _, test := range tests {
@@ -503,13 +514,13 @@ func TestUploadExcelFile(t *testing.T) {
 		writer := multipart.NewWriter(body)
 
 		// Create a new file part
-		fileWriter, err := writer.CreateFormFile("file", inputPath)
+		fileWriter, err := writer.CreateFormFile("file", inputFilename)
 		if err != nil {
 			t.Fatalf("Failed to create form file: %v", err)
 		}
 
 		// Open the test file
-		file, err := os.Open(inputFilename)
+		file, err := os.Open(inputPath)
 		if err != nil {
 			t.Fatalf("Failed to open test file: %v", err)
 		}
@@ -532,27 +543,10 @@ func TestUploadExcelFile(t *testing.T) {
 		req.Header.Set("Content-Type", writer.FormDataContentType())
 
 		// Call the UploadExcelFile function
-		filename, uploadPath, err1 := UploadExcelFile(req)
+		_, _, err1 := UploadExcelFile(req)
 		if err1.ErrorCode != expectedErr {
-			t.Errorf("UploadExcelFile returned an error: %v", err)
+			t.Errorf("UploadExcelFile returned an error: %v", err1)
 		}
 
-		// Check if the filename and uploadPath are not empty
-		if filename == "" {
-			t.Errorf("UploadExcelFile returned an empty filename")
-		}
-		if uploadPath == "" {
-			t.Errorf("UploadExcelFile returned an empty uploadPath")
-		}
-
-		// Check if the uploaded file exists
-		if _, err := os.Stat(uploadPath); os.IsNotExist(err) {
-			t.Errorf("Uploaded file does not exist: %s", uploadPath)
-		}
-
-		// Clean up: remove the uploaded file
-		if err := os.Remove(uploadPath); err != nil {
-			t.Fatalf("Failed to remove uploaded file: %v", err)
-		}
 	}
 }

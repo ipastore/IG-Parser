@@ -138,8 +138,13 @@ func UploadExcelFile(r *http.Request) (string, string, ProductionError) {
 	}
 
 	filename := fileHeader.Filename
-	// Check if the file is not an excel file
-	if fileHeader.Header.Get("Content-Type") != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" {
+	fileExtension := filepath.Ext(filename)
+	// Check if the file is not an excel 2007 file. Excelize only supports .xlsx and .xlsm
+	if fileExtension == ".xlsx" || fileExtension == ".xlsm" {
+		// Do nothing
+
+	} else {
+		// The file is not an Excel file
 		errorMsg := "The uploaded file is not an excel file: " + filename
 		return "", "", ProductionError{
 			ErrorCode:    UPLOAD_ERROR_NOT_EXCEL_FILE,
