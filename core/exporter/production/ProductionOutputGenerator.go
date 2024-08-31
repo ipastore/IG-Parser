@@ -113,7 +113,7 @@ func UploadExcelFile(r *http.Request) (string, string, ProductionError) {
 	// Get the file from the form
 	file, fileHeader, err := r.FormFile("file")
 	if err != nil {
-		errorMsg := "Failed to get the file from the form."
+		errorMsg := "Failed to get the file from the form. Check if the file has been chosen before submitting"
 		log.Println(err.Error())
 		return "", "", ProductionError{
 			ErrorCode:    UPLOAD_ERROR_GETTING_FILE,
@@ -273,6 +273,8 @@ func ProcessExcelFile(uploadPath string, filename string) (string, ProductionErr
 		rowToWriteInterface := make([]interface{}, 0)
 		// Interface to catch the parsing error from the parser
 		errorMessageInterface := make([]interface{}, 1)
+		// Interface to catch the stmt id when there is an error or an empty cell
+		stmtIdInterface := make([]interface{}, 1)
 		//Interface to catch the existing row. Maximum length is the length of the
 		rowMatrixInterface := make([]interface{}, headerLen)
 
@@ -364,11 +366,17 @@ func ProcessExcelFile(uploadPath string, filename string) (string, ProductionErr
 				printHeaders is indifferent, printIgScriptInput is indifferent.
 			*/
 
-			// Catch the error of the empty coded statement
+			// Catch the error of the empty coded statement, print stmtId and increment it
 			if codedStatementColumn > len(rowMatrix)-1 {
 				errorMessageInterface[0] = shared.ERROR_INPUT_NO_STATEMENT
+				stmtIdInterface[0] = stmtId
 
-				rowToWriteInterface = append(rowMatrixInterface, errorMessageInterface)
+				// Increment the stmtId
+				stmtIdint, _ := strconv.Atoi(stmtId)
+				stmtIdint += 1
+				stmtId = strconv.Itoa(stmtIdint)
+
+				rowToWriteInterface = append(rowMatrixInterface, errorMessageInterface[0], stmtIdInterface[0])
 
 				// Get the coordinates of the cell to write
 				coordinateCell, err := excelize.CoordinatesToCellName(1, rowCoordinate)
@@ -399,6 +407,7 @@ func ProcessExcelFile(uploadPath string, filename string) (string, ProductionErr
 
 			// Catching the parsing error and store it in the interface. If there is a error, print the error and continue to the next row
 			// If there is no error: print OK and print the output of the parsing
+			// Update the statementID always
 			if err2.ErrorCode != tree.PARSING_NO_ERROR {
 				if rowMatrix[codedStatementColumn] == "" {
 					errorMessageInterface[0] = shared.ERROR_INPUT_NO_STATEMENT
@@ -406,8 +415,14 @@ func ProcessExcelFile(uploadPath string, filename string) (string, ProductionErr
 
 					errorMessageInterface[0] = err2.ErrorMessage
 				}
+				stmtIdInterface[0] = stmtId
 
-				rowToWriteInterface = append(rowMatrixInterface, errorMessageInterface)
+				// Increment the stmtId
+				stmtIdint, _ := strconv.Atoi(stmtId)
+				stmtIdint += 1
+				stmtId = strconv.Itoa(stmtIdint)
+
+				rowToWriteInterface = append(rowMatrixInterface, errorMessageInterface[0], stmtIdInterface[0])
 
 				// Get the coordinates of the cell to write
 				coordinateCell, err := excelize.CoordinatesToCellName(1, rowCoordinate)
@@ -454,7 +469,7 @@ func ProcessExcelFile(uploadPath string, filename string) (string, ProductionErr
 				}
 
 				// Append the existing row to the error message + the output of the parsing
-				rowToWriteInterface = append(rowMatrixInterface, errorMessageInterface)
+				rowToWriteInterface = append(rowMatrixInterface, errorMessageInterface[0])
 				rowToWriteInterface = append(rowToWriteInterface, singleOutputRowInterface...)
 
 				// Get the coordinates of the cell to write

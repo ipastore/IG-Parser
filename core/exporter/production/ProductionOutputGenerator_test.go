@@ -22,21 +22,22 @@ func TestSearchCodedStatementIdx(t *testing.T) {
 		expectedErr string
 	}{
 		{ // Catching Coded Statement.
-			header:      []string{"Statement", "Coded", "Statement", "Code", "Coded Statement"},
+			header:      []string{"Hello", "Bye", "Hello", "Bye", "Coded Statement"},
 			expectedIdx: []int{4},
 			expectedErr: PRODUCTION_NO_ERROR,
 		},
 		{ // No element match the Regex
 			header: []string{"Statement", "S. C.", "Code", "C. St.",
-				"Co Sta", "Cod S", "Coded", "C Statement"},
+				"Co Sta", "Cod S", "Coded", "C Statement", "Encoded"},
 			expectedIdx: nil,
 			expectedErr: HEADER_MATCHING_ERROR_NO_MATCH_FOR_CODED_STATEMENT,
 		},
 		{ // All this elemnts match the Regex
 			header: []string{"Coded Statement", "Statement Coded",
 				"CODED STATEMENT", "STATEMENT CODED", "Cod. St.", "Cod Statmnt",
-				"CodedStatemnt", "Cod Stmnt", "Coded St", "Coded_-/Staement123"},
-			expectedIdx: []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
+				"CodedStatemnt", "Cod Stmnt", "Coded St", "Coded_-/Staement123",
+				"Encoded Statement", "Statement Encoded", "ENCODED STATEMENT", "STATEMENT ENCODED"},
+			expectedIdx: []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13},
 			expectedErr: HEADER_MATCHING_ERROR_MULTIPLE_MATCHES_FOR_CODED_STATEMENT,
 		},
 	}
@@ -85,21 +86,32 @@ func TestProcessFileDefaultConfig(t *testing.T) {
 			expectedErr:      PRODUCTION_NO_ERROR,
 		},
 
+		{ // Empty coded statement in 1 row having a shorter length than the header
+			inputFilename:    "05_OneColumnOffset.xlsx",
+			expectedFilename: "05_OneColumnOffset_CODED.xlsx",
+			expectedErr:      PRODUCTION_NO_ERROR,
+		},
+		{ // Empty rows, and parsing errors to test the dinamycally increment of stmtID
+			inputFilename:    "06_TestProductionErrorsAndEmptyRows.xlsx",
+			expectedFilename: "06_TestProductionErrorsAndEmptyRows_CODED.xlsx",
+			expectedErr:      PRODUCTION_NO_ERROR,
+		},
+
 		{ // Header without Coded Statement column
 			inputFilename:    "101_TestProductionEmptyCellHeaderCodedStatementNoMatch.xlsx",
 			expectedFilename: "",
 			expectedErr:      HEADER_MATCHING_ERROR_NO_MATCH_FOR_CODED_STATEMENT,
 		},
 
-		{ // Header without Coded Statement column
-			inputFilename:    "102_TestProductionMatrixBiggerThanHeader.xlsx",
+		{ // Row larger than header
+			inputFilename:    "102_TestProductionRowLargerThanHeader.xlsx",
 			expectedFilename: "",
 			expectedErr:      PROCESS_ERROR_ROW_LARGER_THAN_HEADER,
 		},
-		{ // Row larger than header
-			inputFilename:    "104_TestProductionRowLargerThanHeader.xlsx",
+		{ // Matrix with offset of 1 row
+			inputFilename:    "103_OneRowOffset_CODED.xlsx",
 			expectedFilename: "",
-			expectedErr:      PROCESS_ERROR_ROW_LARGER_THAN_HEADER,
+			expectedErr:      HEADER_MATCHING_ERROR_NO_MATCH_FOR_CODED_STATEMENT,
 		},
 	}
 
