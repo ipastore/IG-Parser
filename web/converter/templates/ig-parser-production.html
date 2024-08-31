@@ -1,27 +1,68 @@
 {{template "top.html" . }}
 {{template "coding-interface-production.html" . }}
 
+    <!-- Explanation Section -->
+    <div class="explanation-section">
+        <h2>Production Version</h2>
+        <div class="grid-container">
+            <!-- Intended Use -->
+            <div class="grid-item-intended-use">
+                <h2>Intended Use</h2>
+                <p>The Production Version is designed to receive an input Excel with Encoded Statements 
+                    and produce an output Excel with parsed outputs for each row. If run locally, the output file is saved automatically 
+                    in the "./IG-Parser_Library" folder.</p>
+            </div>
+
+            <!-- Must Do -->
+            <div class="grid-item">
+             <h2>User Must</h2>
+                <ul>
+                     <li>Include a header in the first row</li>
+                     <li>Ensure that the header has a column indicating the Encoded Statement.</li>
+                     
+                </ul>
+             </div>
+    
+            <!-- Can Do -->
+            <div class="grid-item">
+                <h2>Can</h2>
+                <ul>
+                    <li>Provide IG Extended  and IG Logico output.</li>
+                    <li>Drag and Drop input file.</li>
+                    <li>Find the Encoded Statements columns with different <span data-text="{{.CodedStmtNameHelp}}" class="tooltip">names.</span></li>
+                    <li>Support empty cells in the Encoded Statement column (for parsing in-progress work).</li>
+                </ul>
+            </div>
+    
+            <!-- Can't Do -->
+            <div class="grid-item">
+                <h2>Can't</h2>
+                <ul>
+                    <li>Support input file formats different than .xlsx or .xlsm</li>
+                    <li>Support input file bigger than 5MB</li>
+                    <li>Choose more than 1 file</li>
+                </ul>
+            </div>
+    
+ 
+        </div>
+    </div>
 
 <!-- link to switch between parser versions -->
-     <span data-text=""><a href="/visual/" onclick="saveFormContent()">Switch to visual version of IG Parser</a></span><br /><br />
-     <span data-text=""><a href="/" onclick="saveFormContent()">Switch to tabular version of IG Parser</a></span><br /><br />
+<span data-text=""><a href="/visual/" onclick="saveFormContent()">Switch to visual version of IG Parser</a></span><br /><br />
+<span data-text=""><a href="/" onclick="saveFormContent()">Switch to tabular version of IG Parser</a></span><br /><br />
      
-     <!-- Parameters -->
-     <span data-text="{{.ParametersHelp}}" class="tooltip">Parameters:</span>
-     
-     <span data-text="{{.IgScriptInclusionHelp}}" class="tooltip">Inclusion of IG Script-encoded statement in generated output:</span>
-     <select id="printIgScript" name="printIgScript" type="select">
-         {{ range $type := .PrintIgScriptSelection }}
-         <option value="{{ $type }}" {{ if eq $.PrintIgScript $type }}selected="selected"{{ end }}>{{ $type }}</option>
-         {{ end }}
-     </select>
-     
-     <input id="igExtended" name="igExtended" type="checkbox" {{.IGExtendedOutput}} /><label for="igExtended">Produce IG Extended output (component-level nesting) (default: off)</label>
-     <input id="annotations" name="annotations" type="checkbox" {{.IncludeAnnotations}} /><label for="annotations">Include IG Logico annotations in output (default: off)</label>
-     <!-- <input id="includeHeaders" name="includeHeaders" type="checkbox" {{.IncludeHeaders}} /><label for="includeHeaders">Include header row in output (default: on)</label><br /> -->
-     
-     <input class="input file-input" type="file" name="file"/>
-     <input value="Send file to parse" onclick="saveFormContent()" type="submit">
+<!-- Parameters -->
+<span data-text="{{.ParametersHelp}}" class="tooltip">Parameters:</span>
+<input id="igExtended" name="igExtended" type="checkbox" {{.IGExtendedOutput}} /><label for="igExtended">Produce IG Extended output (component-level nesting) (default: off)</label>
+<input id="annotations" name="annotations" type="checkbox" {{.IncludeAnnotations}} /><label for="annotations">Include IG Logico annotations in output (default: off)</label>
+<!-- <input id="includeHeaders" name="includeHeaders" type="checkbox" {{.IncludeHeaders}} /><label for="includeHeaders">Include header row in output (default: on)</label><br /> -->
+ 
+<span> Drag and Drop or Choose from files:</span>
+<input class="input file-input" type="file" name="file"/>
+<!-- <input value="Send file to parse" onclick="saveFormContent()" type="submit"> -->
+<button id="generate" class="submit" value="Send file to parse" onclick="saveFormContent()" type="submit">Send file to parse</button>
+
 {{if .Error}}
 <div class="error">
     Error: {{.Message}}

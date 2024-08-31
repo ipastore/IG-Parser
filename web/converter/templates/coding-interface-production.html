@@ -7,6 +7,43 @@
   <link rel="stylesheet" href="/css/default.css">
   <!-- ACE Editor -->
   <script src="/libraries/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+  <style>
+/* CSS for Grid Layout */
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 20px;
+    padding: 20px;
+}
+
+.grid-item {
+    padding: 10px;
+    border: 2px solid #333; /* Bold border to match the existing bold design */
+    border-radius: 8px;
+    background-color: #f8f9fa; /* Background color to differentiate sections */
+}
+
+.grid-item-intended-use {
+    padding: 10px;
+    border: 2px solid #333; /* Bold border to match the existing bold design */
+    border-radius: 8px;
+    background-color: #f8f9fa; /* Background color to differentiate sections */
+    justify-content: center; 
+    align-items: center; 
+    text-align: center; 
+}
+
+
+
+/* Responsive Design Adjustments */
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: 1fr; /* Stack the grid items on smaller screens */
+    }
+}
+
+</style>
 </head>
 
 <body>

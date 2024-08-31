@@ -200,6 +200,7 @@ func converterHandler(w http.ResponseWriter, r *http.Request, templateName strin
 		OriginalStatementInclusionHelp:  shared.HELP_ORIGINAL_STATEMENT_OUTPUT,
 		IgScriptInclusionHelp:           shared.HELP_IG_SCRIPT_OUTPUT,
 		ReportHelp:                      shared.HELP_REPORT,
+		CodedStmtNameHelp:               shared.HELP_ENCODED_STATEMENT_NAMES,
 		Version:                         config.IG_PARSER_VERSION}
 
 	// Parse UI canvas information (visual parser)
@@ -508,32 +509,37 @@ func converterHandler(w http.ResponseWriter, r *http.Request, templateName strin
 		}
 	}
 
-	// Logging and catching empty input for tabular and visual output
+	// // Logging and caatching empty input for tabular and visual output
+	// if templateName == TEMPLATE_NAME_PARSER_PRODUCTION {
+	// 	Println("Production output requested")
+	// 	handleProductionOutput(w, r, retStruct, produceIGExtendedOutput, includeAnnotations)
+	// }
 	if templateName != TEMPLATE_NAME_PARSER_PRODUCTION {
+
 		fmt.Println("Input values:\n" +
 			"RAW STATEMENT: " + retStruct.RawStmt + "\n" +
 			"ANNOTATED STATEMENT: " + retStruct.CodedStmt + "\n")
+	}
 
-		// Check for empty input statement first
-		if retStruct.CodedStmt == "" {
-			retStruct.Success = false
-			retStruct.Error = true
-			retStruct.Message = shared.ERROR_INPUT_NO_STATEMENT
-			err := tmpl.ExecuteTemplate(w, templateName, retStruct)
-			if err != nil {
-				log.Println("Error generating error response for empty input:", err.Error())
-				http.Error(w, "Could not process request.", http.StatusInternalServerError)
-			}
-
-			// Final comment in log
-			Println("Error: No input to parse.")
-			// Ensure logging is terminated
-			err2 := terminateOutput(ERROR_SUFFIX)
-			if err2 != nil {
-				log.Println("Error when finalizing log file: ", err2.Error())
-			}
-			return
+	// Check for empty input statement first
+	if retStruct.CodedStmt == "" && templateName != TEMPLATE_NAME_PARSER_PRODUCTION {
+		retStruct.Success = false
+		retStruct.Error = true
+		retStruct.Message = shared.ERROR_INPUT_NO_STATEMENT
+		err := tmpl.ExecuteTemplate(w, templateName, retStruct)
+		if err != nil {
+			log.Println("Error generating error response for empty input:", err.Error())
+			http.Error(w, "Could not process request.", http.StatusInternalServerError)
 		}
+		// Final comment in log
+		Println("Error: No input to parse.")
+		// Ensure logging is terminated
+		err2 := terminateOutput(ERROR_SUFFIX)
+		if err2 != nil {
+			log.Println("Error when finalizing log file: ", err2.Error())
+		}
+		return
+
 	} else {
 		// Delegate to specific output handlers ...
 		if templateName == TEMPLATE_NAME_PARSER_TABULAR {

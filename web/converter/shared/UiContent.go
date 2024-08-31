@@ -159,3 +159,6 @@ const HELP_OUTPUT_TYPE = "The application currently supports two output types, e
 // Help for report error field
 const HELP_REPORT = "Clicking on this link should open your mail client with a pre-populated mail." + LINEBREAK +
 	"Alternatively, right-click on the link, copy the e-mail address, and send a mail manually. Ensure to provide the Request ID in the subject line or body of your mail."
+
+// Help for report error field
+const HELP_ENCODED_STATEMENT_NAMES = "Coded Statement, Statement Coded, CODED STATEMENT, STATEMENT CODED, Cod. St., Cod Statmnt, CodedStatemnt, Cod Stmnt, Coded St, Encoded Statement, Statement Encoded, ENCODED STATEMENT, STATEMENT ENCODED"

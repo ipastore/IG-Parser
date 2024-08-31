@@ -88,6 +88,8 @@ type ReturnStruct struct {
 	OutputTypeHelp string
 	// Help message for report tooltip
 	ReportHelp string
+	// Help message for possible Coded Statement errors
+	CodedStmtNameHelp string
 	// Version ID output in frontend
 	Version string
 }
