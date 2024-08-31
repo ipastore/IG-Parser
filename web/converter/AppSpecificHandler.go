@@ -21,28 +21,10 @@ Should be invoked by #converterHandler().
 */
 
 // Esta funcion la tengo que modificar
-func handleProductionOutput(w http.ResponseWriter, r *http.Request, retStruct shared.ReturnStruct, dynamicOutput bool, produceIGExtendedOutput bool, includeAnnotations bool, outputType string, printHeaders bool, printIgScriptInput string) {
-
-	// Run default configuration
-	shared.SetDefaultConfig()
-	// Now, adjust to user settings based on UI output
-	// Define whether output is dynamic
-	Println("Setting dynamic output:", dynamicOutput)
-	tabular.SetDynamicOutput(dynamicOutput)
-	// Define whether output is IG Extended (component-level nesting)
-	Println("Setting IG Extended output:", produceIGExtendedOutput)
-	tabular.SetProduceIGExtendedOutput(produceIGExtendedOutput)
-	// Define whether annotations are included
-	Println("Setting annotations:", includeAnnotations)
-	tabular.SetIncludeAnnotations(includeAnnotations)
-	// Define whether header row is included
-	Println("Setting header row:", printHeaders)
-	tabular.SetIncludeHeaders(printHeaders)
-	// Output type
-	Println("Output type:", outputType)
+func handleProductionOutput(w http.ResponseWriter, r *http.Request, retStruct shared.ReturnStruct, produceIGExtendedOutput bool, includeAnnotations bool) {
 
 	// Make production output from Excel file
-	savePath, err2 := production.ConvertExcelToExcelWithTabularOutput(r)
+	savePath, err2 := production.ConvertExcelToExcelWithTabularOutput(r, produceIGExtendedOutput, includeAnnotations)
 	if err2.ErrorCode != production.PRODUCTION_NO_ERROR {
 		retStruct.Success = false
 		retStruct.Error = true

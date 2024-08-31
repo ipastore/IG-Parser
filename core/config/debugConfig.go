@@ -27,3 +27,6 @@ var DEBUG_FINAL_OUTPUT = false
 
 // Debug information related to the frontend (e.g., web frontend). Can be used by any third-party application.
 var DEBUG_FRONTEND = false
+
+// Debug information related to the production output (e.g., Excel output)
+var DEBUG_PRODUCTION = true

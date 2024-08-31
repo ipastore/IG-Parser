@@ -18,7 +18,18 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
-func ConvertExcelToExcelWithTabularOutput(r *http.Request) (string, ProductionError) {
+func ConvertExcelToExcelWithTabularOutput(r *http.Request, produceIGExtendedOutput, includeAnnotations bool) (string, ProductionError) {
+
+	// Run default configuration
+	shared.SetDefaultConfig()
+	// Now, adjust to user settings based on UI output
+	// Define whether output is IG Extended (component-level nesting)
+	Println("Setting IG Extended output:", produceIGExtendedOutput)
+	tabular.SetProduceIGExtendedOutput(produceIGExtendedOutput)
+	// Define whether annotations are included
+	Println("Setting annotations:", includeAnnotations)
+	tabular.SetIncludeAnnotations(includeAnnotations)
+	// Indicate whether Original Statement input is included in output
 
 	// Upload file to IG-library folder
 	filename, uploadPath, err := UploadExcelFile(r)
@@ -455,45 +466,48 @@ func ProcessExcelFile(uploadPath string, filename string) (string, ProductionErr
 			stmtIdint += 1
 			stmtId = strconv.Itoa(stmtIdint)
 
-			// Loop to write each elemnt of the statement map
-			for _, statementMap := range output[0].StatementMap {
-				singleOutputRowInterface := make([]interface{}, len(output[0].HeaderSymbols))
+			// Loop to iterate over output slice
+			for _, output := range output {
+				// Loop to iterate over the statement map
+				for _, statementMap := range output.StatementMap {
+					singleOutputRowInterface := make([]interface{}, len(output.HeaderSymbols))
 
-				// Loop to run through the map through the headerSymbols and print the pair Key:value. if there is no value, print an empty string
-				for i, headerSymbol := range output[0].HeaderSymbols {
-					if val, ok := statementMap[headerSymbol]; ok {
-						singleOutputRowInterface[i] = val
-					} else {
-						singleOutputRowInterface[i] = ""
+					// Loop to run through the map through the headerSymbols and print the pair Key:value. if there is no value, print an empty string
+					for i, headerSymbol := range output.HeaderSymbols {
+						if val, ok := statementMap[headerSymbol]; ok {
+							singleOutputRowInterface[i] = val
+						} else {
+							singleOutputRowInterface[i] = ""
+						}
 					}
-				}
 
-				// Append the existing row to the error message + the output of the parsing
-				rowToWriteInterface = append(rowMatrixInterface, errorMessageInterface[0])
-				rowToWriteInterface = append(rowToWriteInterface, singleOutputRowInterface...)
+					// Append the existing row to the error message + the output of the parsing
+					rowToWriteInterface = append(rowMatrixInterface, errorMessageInterface[0])
+					rowToWriteInterface = append(rowToWriteInterface, singleOutputRowInterface...)
 
-				// Get the coordinates of the cell to write
-				coordinateCell, err := excelize.CoordinatesToCellName(1, rowCoordinate)
-				if err != nil {
-					errorMsg := "Failed to convert coordinates to cell name."
-					log.Println(err.Error())
-					return "", ProductionError{
-						ErrorCode:    PROCESS_ERROR_COORDINATE_CONVERSION,
-						ErrorMessage: errorMsg,
+					// Get the coordinates of the cell to write
+					coordinateCell, err := excelize.CoordinatesToCellName(1, rowCoordinate)
+					if err != nil {
+						errorMsg := "Failed to convert coordinates to cell name."
+						log.Println(err.Error())
+						return "", ProductionError{
+							ErrorCode:    PROCESS_ERROR_COORDINATE_CONVERSION,
+							ErrorMessage: errorMsg,
+						}
 					}
-				}
-				// Set the row in the coordinate cell with the streamwriter
-				if err := sw.SetRow(coordinateCell, rowToWriteInterface); err != nil {
-					errorMsg := "Failed to set the row with the streamwriter."
-					log.Println(err.Error())
-					return "", ProductionError{
-						ErrorCode:    PROCESS_ERROR_SETTING_ROW,
-						ErrorMessage: errorMsg,
+					// Set the row in the coordinate cell with the streamwriter
+					if err := sw.SetRow(coordinateCell, rowToWriteInterface); err != nil {
+						errorMsg := "Failed to set the row with the streamwriter."
+						log.Println(err.Error())
+						return "", ProductionError{
+							ErrorCode:    PROCESS_ERROR_SETTING_ROW,
+							ErrorMessage: errorMsg,
+						}
 					}
-				}
-				// Increment the rowCoordinate
-				rowCoordinate += 1
+					// Increment the rowCoordinate
+					rowCoordinate += 1
 
+				}
 			}
 		}
 	}

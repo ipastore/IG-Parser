@@ -508,29 +508,32 @@ func converterHandler(w http.ResponseWriter, r *http.Request, templateName strin
 		}
 	}
 
-	fmt.Println("Input values:\n" +
-		"RAW STATEMENT: " + retStruct.RawStmt + "\n" +
-		"ANNOTATED STATEMENT: " + retStruct.CodedStmt + "\n")
+	// Logging and catching empty input for tabular and visual output
+	if templateName != TEMPLATE_NAME_PARSER_PRODUCTION {
+		fmt.Println("Input values:\n" +
+			"RAW STATEMENT: " + retStruct.RawStmt + "\n" +
+			"ANNOTATED STATEMENT: " + retStruct.CodedStmt + "\n")
 
-	// Check for empty input statement first BUT leave out production template
-	if retStruct.CodedStmt == "" && templateName != TEMPLATE_NAME_PARSER_PRODUCTION {
-		retStruct.Success = false
-		retStruct.Error = true
-		retStruct.Message = shared.ERROR_INPUT_NO_STATEMENT
-		err := tmpl.ExecuteTemplate(w, templateName, retStruct)
-		if err != nil {
-			log.Println("Error generating error response for empty input:", err.Error())
-			http.Error(w, "Could not process request.", http.StatusInternalServerError)
-		}
+		// Check for empty input statement first
+		if retStruct.CodedStmt == "" {
+			retStruct.Success = false
+			retStruct.Error = true
+			retStruct.Message = shared.ERROR_INPUT_NO_STATEMENT
+			err := tmpl.ExecuteTemplate(w, templateName, retStruct)
+			if err != nil {
+				log.Println("Error generating error response for empty input:", err.Error())
+				http.Error(w, "Could not process request.", http.StatusInternalServerError)
+			}
 
-		// Final comment in log
-		Println("Error: No input to parse.")
-		// Ensure logging is terminated
-		err2 := terminateOutput(ERROR_SUFFIX)
-		if err2 != nil {
-			log.Println("Error when finalizing log file: ", err2.Error())
+			// Final comment in log
+			Println("Error: No input to parse.")
+			// Ensure logging is terminated
+			err2 := terminateOutput(ERROR_SUFFIX)
+			if err2 != nil {
+				log.Println("Error when finalizing log file: ", err2.Error())
+			}
+			return
 		}
-		return
 	} else {
 		// Delegate to specific output handlers ...
 		if templateName == TEMPLATE_NAME_PARSER_TABULAR {
@@ -541,7 +544,7 @@ func converterHandler(w http.ResponseWriter, r *http.Request, templateName strin
 			handleVisualOutput(w, retStruct.CodedStmt, retStruct.StmtId, retStruct, printFlatProperties, printBinaryTree, printActivationConditionsOnTop, dynamicOutput, produceIGExtendedOutput, includeAnnotations, includeDoV)
 		} else if templateName == TEMPLATE_NAME_PARSER_PRODUCTION {
 			Println("Production output requested")
-			handleProductionOutput(w, r, retStruct, dynamicOutput, produceIGExtendedOutput, includeAnnotations, retStruct.OutputType, printHeaders, formValuePrintIgScript)
+			handleProductionOutput(w, r, retStruct, produceIGExtendedOutput, includeAnnotations)
 		} else {
 			log.Fatal("Output variant " + templateName + " not found.")
 		}
