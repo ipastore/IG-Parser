@@ -9,8 +9,8 @@
             <div class="grid-item-intended-use">
                 <h2>Intended Use</h2>
                 <p>The Production Version is designed to receive an input Excel with Encoded Statements 
-                    and produce an output Excel with parsed outputs for each row. If run locally, the output file is saved automatically 
-                    in the "./IG-Parser_Library" folder.</p>
+                    and produce an output Excel with parsed outputs for each row appended to the existing content.
+                If run locally, the output file is saved automatically in the "./IG-Parser_Library" folder.</p>
             </div>
 
             <!-- Must Do -->
@@ -31,6 +31,8 @@
                     <li>Drag and Drop input file.</li>
                     <li>Find the Encoded Statements columns with different <span data-text="{{.CodedStmtNameHelp}}" class="tooltip">names.</span></li>
                     <li>Support empty cells in the Encoded Statement column (for parsing in-progress work).</li>
+                    <li>Update dynamically the Encoded Statement ID</li>
+
                 </ul>
             </div>
     
