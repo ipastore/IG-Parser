@@ -101,6 +101,16 @@ func TestProcessFileDefaultConfig(t *testing.T) {
 			expectedFilename: "07_TestProductionComplexStatementsWithAnnotations_DEFAULT_CODED.xlsx",
 			expectedErr:      PRODUCTION_NO_ERROR,
 		},
+		{ // Empty rows, and parsing errors to test the dinamycally increment of stmtID
+			inputFilename:    "08_OneComplexStatement.xlsx",
+			expectedFilename: "08_OneComplexStatement_DEFAULT_CODED.xlsx",
+			expectedErr:      PRODUCTION_NO_ERROR,
+		},
+		{ // Empty rows, and parsing errors to test the dinamycally increment of stmtID
+			inputFilename:    "09_TestProduction2SheetsCorrectActiveSheet.xlsx",
+			expectedFilename: "09_TestProduction2SheetsCorrectActiveSheet_DEFAULT_CODED.xlsx",
+			expectedErr:      PRODUCTION_NO_ERROR,
+		},
 
 		{ // Header without Coded Statement column
 			inputFilename:    "101_TestProductionEmptyCellHeaderCodedStatementNoMatch.xlsx",
@@ -115,6 +125,11 @@ func TestProcessFileDefaultConfig(t *testing.T) {
 		},
 		{ // Matrix with offset of 1 row
 			inputFilename:    "103_TestProductionOneRowOffset.xlsx",
+			expectedFilename: "",
+			expectedErr:      HEADER_MATCHING_ERROR_NO_MATCH_FOR_CODED_STATEMENT,
+		},
+		{ // Empty rows, and parsing errors to test the dinamycally increment of stmtID
+			inputFilename:    "104_TestProduction2SheetsIncorrectActiveSheet.xlsx",
 			expectedFilename: "",
 			expectedErr:      HEADER_MATCHING_ERROR_NO_MATCH_FOR_CODED_STATEMENT,
 		},

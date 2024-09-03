@@ -1,18 +1,22 @@
-# Contributors to the IG Parser code base
+# Contributors to the IG-Parser-Production Code Base
 
-This file contains the list of people who have contributed code to the IG Parser repository. This list is to be used in favour over author attributions in individual files.
 
-The list should be continuously updated and accompany any distribution of the code.
+## Project Funding
 
-Code integrated from third parties by others than their original authors may not have any @author tags removed and respective names must not be added to this file. Where libraries are considered, check the associated license for compatibility with the intended use.
+This project has received funding from the European Research Council (ERC-2021-CoG)
 
-In addition to the contributor name, the mail address may be provided (in pointy brackets). Associated GitHub IDs may be specified in square brackets.
+## Maintainer
 
-* Maintainer(s):
-  * Christopher Frantz (cf@christopherfrantz.org) [@chrfrantz]
+* Ignacio Pastore Benaim (ignaciopastorebenaim@gmail.com) [@ipastore] - developer and maintainer of this fork
 
-* Contributors to IG Parser codebase:
-  * Christopher Frantz (cf@christopherfrantz.org) [@chrfrantz]
-  * Jonas Kjærandsen [@Kjaerandsen] - contributed refined editor with color-coding support
+## Contributors
 
-If intending to contribute to the code base, please do so via pull requests (remember update this file as part of the pull request).
+* Irene Perez Ibarra (irene.perez@resilientrules.org) [@iperezibarra] - Principal Investigator and advisor.
+
+## Contributing
+
+If you intend to contribute to this forked code base, please do so via pull requests. Remember to update this file as part of your pull request.
+
+## Acknowledgment of Original Repository
+
+This fork is based on the original IG-Parser by Christopher Frantz ([chrfrantz](https://github.com/chrfrantz)). We acknowledge and thank the original author for his foundational work, which made this enhanced version possible.

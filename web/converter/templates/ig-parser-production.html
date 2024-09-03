@@ -17,9 +17,9 @@
             <div class="grid-item">
              <h2>User Must</h2>
                 <ul>
-                     <li>Include a header in the first row</li>
+                     <li>Include a header in the first row.</li>
                      <li>Ensure that the header has a column indicating the Encoded Statement.</li>
-                     
+                     <li>Ensure that the Active Sheet contains the data to process (for files containing more than 1 sheet). </li>
                 </ul>
              </div>
     
@@ -31,7 +31,7 @@
                     <li>Drag and Drop input file.</li>
                     <li>Find the Encoded Statements columns with different <span data-text="{{.CodedStmtNameHelp}}" class="tooltip">names.</span></li>
                     <li>Support empty cells in the Encoded Statement column (for parsing in-progress work).</li>
-                    <li>Update dynamically the Encoded Statement ID</li>
+                    <li>Update dynamically the Encoded Statement ID.</li>
 
                 </ul>
             </div>
@@ -41,8 +41,11 @@
                 <h2>Can't</h2>
                 <ul>
                     <li>Support input file formats different than .xlsx or .xlsm</li>
-                    <li>Support input file bigger than 5MB</li>
-                    <li>Choose more than 1 file</li>
+                    <li>Support input file bigger than 5MB.</li>
+                    <li>Choose more than 1 file.</li>
+                    <li>Process an Excel fiel with a row larger than the header.</li>
+                    <li>Process 2 sheets at the same time.</li>
+
                 </ul>
             </div>
     
