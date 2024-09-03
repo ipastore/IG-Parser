@@ -50,13 +50,13 @@ If you are familiar with programming, you can follow the quick setup instruction
   * Clone this repository into a dedicated folder on your local machine
   * Navigate to the repository folder
   * Compile IG Parser in the corresponding console
-    * Under Windows, execute `go build -o ig-parser.exe ./web`
-      * This creates the executable `ig-parser.exe` in the repository folder
-    * Under Linux, execute `go build -o ig-parser ./web`
-      * This creates the executable `ig-parser` in the repository folder
+    * Under Windows, execute `go build -o ig-parser-production.exe ./web`
+      * This creates the executable `ig-parser-production.exe` in the repository folder
+    * Under Linux, execute `go build -o ig-parser-production ./web`
+      * This creates the executable `ig-parser-production` in the repository folder
   * Run the created executable
-    * Under Windows, run `ig-parser` (or `ig-parser.exe`) either via command line or by doubleclicking
-    * Under Linux (or Windows PowerShell), run `./ig-parser`
+    * Under Windows, run `ig-parser-production` (or `ig-parser-production.exe`) either via command line or by doubleclicking
+    * Under Linux (or Windows PowerShell), run `./ig-parser-production`
   * Once started, it should automatically open your browser and navigate to http://localhost:8080/visual. Alternatively, use your browser to manually navigate to one of the URLs listed in the console output. By default, this is the URL http://localhost:8080 (and http://localhost:8080/visual respectively)
   * Press `Ctrl` + `C` in the console window to terminate the execution (or simply close the console window)
 
@@ -72,7 +72,4 @@ This project is licensed under the GNU General Public License v3.0. See the [LIC
 ### Acknowledgements
 
 - [chrfrantz](https://github.com/chrfrantz) for the original IG-Parser project.
-
-
-
 

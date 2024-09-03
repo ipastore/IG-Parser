@@ -10,7 +10,7 @@ After compiling the application, you can now run it.
 
 **Instructions:**
 
-1. Navigate to the IG-Parser-Production folder where the executable file (ig-parser.exe or ig-parser) is located. 
+1. Navigate to the IG-Parser-Production folder where the executable file (ig-parser-production.exe or ig-parser-production) is located. 
 
 2. The application will automatically start in a new window of your default web browser at the URL: [http://localhost:8080/production/](http://localhost:8080/production/).
 

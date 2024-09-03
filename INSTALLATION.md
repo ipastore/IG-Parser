@@ -83,15 +83,15 @@ Compile the source code to create the executable file for the web application.
 
 - Under Windows in Git Bash:
 ```sh
-    go build -o ig-parser.exe ./web 
+    go build -o ig-parser-production.exe ./web 
 ```
 
 - Under Linux (MacOS) in Terminal:
 ```sh
-    go build -o ig-parser ./web 
+    go build -o ig-parser.production ./web 
 ```
 
-This will create an executable file named ig-parser in the repository folder (IG-Parser-Production).
+This will create an executable file named ig-parser-production in the repository folder (IG-Parser-Production).
 
 ### Conclusion
 
