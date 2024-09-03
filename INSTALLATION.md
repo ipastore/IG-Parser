@@ -88,7 +88,7 @@ Compile the source code to create the executable file for the web application.
 
 - Under Linux (MacOS) in Terminal:
 ```sh
-    go build -o ig-parser.production ./web 
+    go build -o ig-parser-production ./web 
 ```
 
 This will create an executable file named ig-parser-production in the repository folder (IG-Parser-Production).
@@ -99,5 +99,5 @@ You have successfully installed the IG-Parser-Production on your local machine. 
 
 ## Further help
 
-If you are a Windows user and need a more detailed step-by-step installation guide with illustrations and examples, please refer to this [Installation and Usage Guide](docs/InstallationAndUsageGuide.pdf) in PDF ([Also available in Spanish](docs/GuiaInstalacionUso.pdf) ). If you are a Linux user this guide should also be useful to understand the process of installation.
+If you are a Windows user and need a more detailed step-by-step installation guide with illustrations and examples, please refer to this [Installation and Usage Guide](docs/InstallationUsageGuideENGLISH.pdf) in PDF [(Also available in Spanish)](docs/InstallationUsageGuideSPANISH.pdf). If you are a Linux user this guide should also be useful to understand the process of installation.
 

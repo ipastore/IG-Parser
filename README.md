@@ -3,8 +3,8 @@
 [![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](LICENSE)
 
 <div align="center">
-  <img src="" alt="RESILIENT RULES Logo" height="100">
-  <img src="assets/00logo-ERC.png" alt="ERC and EU Funding Logo" height="130">
+  <img src="assets/00-RRLogo.png" alt="RESILIENT RULES Logo" height="100">
+  <img src="assets/00-ERCLogo.png" alt="ERC and EU Funding Logo" height="100">
 </div>
 
 
@@ -18,7 +18,7 @@ See [Contributors](contributors.md)
 
 ### Introduction
 
-This repository is a fork of the [IG-Parser](https://github.com/chrfrantz/IG-Parser) created by [chrfrantz](https://github.com/chrfrantz). The purpose of this fork is to enhance the original IG-Parser with additional features and improvements, specifically designed for the **RESILIENT RULES** project (ERC-2021-CoG).
+This repository is a fork of the [IG-Parser](https://github.com/chrfrantz/IG-Parser) created by [chrfrantz](https://github.com/chrfrantz). The purpose of this fork is to enhance the original IG-Parser with additional features and improvements, specifically designed for the **RESILIENT RULES** project (ERC, Grant# 101044225).
 
 **Note:** This version of the IG-Parser-Production is currently designed for **local deployment only**. Future updates will include development for server deployment.
 
