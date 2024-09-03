@@ -3,16 +3,16 @@
 [![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](LICENSE)
 
 <div align="center">
-  <!-- <img src="assets/00logo-ERC.png" alt="RESILIENT RULES Logo" height="100"> -->
+  <img src="" alt="RESILIENT RULES Logo" height="100">
   <img src="assets/00logo-ERC.png" alt="ERC and EU Funding Logo" height="130">
 </div>
 
 
-New Production feature for Parser for IG 2.0.
+New Production feature for IG-Parser
 
-###### Contact: 
-- Developer: Ignacio Pastore Benaim (ignaciopastorebenaim@gmail.com)
-- Principal Investigator: Irene Pérez Ibarra (perezibarra@unizar.es)
+### Contact: 
+- <u>Developer:</u> Ignacio Pastore Benaim (ignaciopastorebenaim@gmail.com)
+- <u>Principal Investigator:</u> Irene Pérez Ibarra (perezibarra@unizar.es)
 
 See [Contributors](contributors.md) 
 

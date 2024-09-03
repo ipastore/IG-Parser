@@ -53,7 +53,10 @@ Now, clone the GitHub repository where the web application is located.
 
 **Instructions:**
 
-1. Under Windows open **Git Bash** (an application installed with Git). You can find it in the Windows Start menu by searching for **"Git Bash"**. Under Linux (MacOS) open **Terminal**
+1. 
+- Under Windows open **Git Bash** (an application installed with Git). You can find it in the Windows Start menu by searching for **"Git Bash"**. 
+- Under Linux (MacOS) open **Terminal**
+
 2. Type the following command and press Enter:
 
    ```sh
@@ -68,7 +71,7 @@ Compile the source code to create the executable file for the web application.
 
 **Instructions:**
 
-1.	Open Git Bash or Terminal again or continue in the same window.
+1.	Open **Git Bash** or **Terminal** again or continue in the same window.
 2.	Navigate to the folder where the repository was cloned by typing:
 
 
@@ -78,12 +81,12 @@ Compile the source code to create the executable file for the web application.
 
 3. Compile the application by running the following command:
 
-Under Windows in Git Bash:
+- Under Windows in Git Bash:
 ```sh
     go build -o ig-parser.exe ./web 
 ```
 
-Under Linux (MacOS) in Terminal:
+- Under Linux (MacOS) in Terminal:
 ```sh
     go build -o ig-parser ./web 
 ```
@@ -96,5 +99,5 @@ You have successfully installed the IG-Parser-Production on your local machine. 
 
 ## Further help
 
-If you are a Windows user and need a more detailed step-by-step installation guide with illustrations and examples, please refer to this [Installation and Usage Guide](docs/InstallationAndUsageGuide.pdf) in PDF. If you are a Linux user this guide should also be useful to understand the process of Installation.
+If you are a Windows user and need a more detailed step-by-step installation guide with illustrations and examples, please refer to this [Installation and Usage Guide](docs/InstallationAndUsageGuide.pdf) in PDF ([Also available in Spanish](docs/GuiaInstalacionUso.pdf) ). If you are a Linux user this guide should also be useful to understand the process of installation.
 
