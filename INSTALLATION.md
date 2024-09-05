@@ -3,7 +3,7 @@
 ## IG-Parser-Production
 Follow these steps to install the IG-Parser-Production on your local machine:
 
-### Step 1: Verify Your Oprtating System Version
+### Step 1: Verify Your Operating System Version
 
 To ensure you download the correct installers, first verify your operating system version.
 
@@ -53,7 +53,7 @@ Now, clone the GitHub repository where the web application is located.
 
 **Instructions:**
 
-1. 
+1. Open the following app:  
 - Under Windows open **Git Bash** (an application installed with Git). You can find it in the Windows Start menu by searching for **"Git Bash"**. 
 - Under Linux (MacOS) open **Terminal**
 

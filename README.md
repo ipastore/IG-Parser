@@ -39,7 +39,7 @@ Additionally, both the **tabular** and **visual outputs** are fully functional a
 
 The purpose of building a local executable is to run IG Parser on a local machine (primarily for personal use on your own machine).
 
-For detailed installation instructions fow Windows please refer to the [Installation Guide](INSTALLATION.md). This guide is tailored for users who are new to programming or need step-by-step instructions.
+For detailed installation instructions for Windows please refer to the [Installation Guide](INSTALLATION.md). This guide is tailored for users who are new to programming or need step-by-step instructions.
 
 If you are familiar with programming, you can follow the quick setup instructions below:
 

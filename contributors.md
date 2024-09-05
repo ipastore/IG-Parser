@@ -3,15 +3,15 @@
 
 ## Project Funding
 
-This project has received funding from the European Research Council (ERC-2021-CoG)
+This project has received funding from the European Research Council by ERC-2021-CoG, RESILIENT RULES Grant# 101044225 (See [Resilient Rules website](https://resilientrules.com)).
 
 ## Maintainer
 
-* Ignacio Pastore Benaim (ignaciopastorebenaim@gmail.com) [@ipastore] - developer and maintainer of this fork
+* Ignacio Pastore Benaim (ignaciopastorebenaim@gmail.com) [[@ipastore](https://github.com/ipastore/)] - developer and maintainer of this fork.
 
 ## Contributors
 
-* Irene Perez Ibarra (irene.perez@resilientrules.org) [@iperezibarra] - Principal Investigator and advisor.
+* Irene Perez Ibarra (perezibarra@unizar.es) - Principal Investigator and advisor.
 
 ## Contributing
 
@@ -19,4 +19,4 @@ If you intend to contribute to this forked code base, please do so via pull requ
 
 ## Acknowledgment of Original Repository
 
-This fork is based on the original IG-Parser by Christopher Frantz ([chrfrantz](https://github.com/chrfrantz)). We acknowledge and thank the original author for his foundational work, which made this enhanced version possible.
+This fork is based on the original IG-Parser by Christopher Frantz [[@chrfrantz](https://github.com/chrfrantz)]. We acknowledge and thank the original author for his foundational work, which made this forked version possible, and for his valuable feedback on an earlier version of this module.

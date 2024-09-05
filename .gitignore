@@ -1,6 +1,5 @@
 .DS_Store
 logs/
-uploads/
-coded/
-.vscode/launch.json
+.vscode/
+
 

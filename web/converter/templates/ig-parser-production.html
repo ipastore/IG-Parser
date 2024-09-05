@@ -43,7 +43,7 @@
                     <li>Support input file formats different than .xlsx or .xlsm</li>
                     <li>Support input file bigger than 5MB.</li>
                     <li>Choose more than 1 file.</li>
-                    <li>Process an Excel fiel with a row larger than the header.</li>
+                    <li>Process an Excel file with a row larger than the header.</li>
                     <li>Process 2 sheets at the same time.</li>
 
                 </ul>
@@ -64,9 +64,21 @@
 <!-- <input id="includeHeaders" name="includeHeaders" type="checkbox" {{.IncludeHeaders}} /><label for="includeHeaders">Include header row in output (default: on)</label><br /> -->
  
 <span> Drag and Drop or Choose from files:</span>
-<input class="input file-input" type="file" name="file"/>
-<!-- <input value="Send file to parse" onclick="saveFormContent()" type="submit"> -->
+<!-- <input class="input file-input" type="file" name="file"/>
+<label for="file" class="file-label">Choose a file</label> -->
+
+
+
+<div class="custom-file-input" id="drop-zone">
+    <input type="file" id="file" name="file" class="input file-input" onchange="updateFileName()"/>
+    <label for="file" class="file-label" id="file-label">Choose a file</label>
+    <span id="file-name" class="file-name">No file chosen</span>
+</div>
 <button id="generate" class="submit" value="Send file to parse" onclick="saveFormContent()" type="submit">Send file to parse</button>
+
+
+
+<!-- <button id="generate" class="submit" value="Send file to parse" onclick="saveFormContent()" type="submit">Send file to parse</button> -->
 
 {{if .Error}}
 <div class="error">

@@ -6,7 +6,7 @@ Follow these steps to run and use the IG-Parser-Production application.
 
 #### Step 1: Run the Application
 
-After compiling the application, you can now run it.
+After compiling the application, you can now run it (see [Installation Guide](INSTALLATION.md)).
 
 **Instructions:**
 
@@ -30,7 +30,7 @@ After running the application, follow these steps to ensure it functions correct
 5. Click **“Send file to parse.”**
 
 6. If the file is processed successfully, a message will appear:
-   “Successfully saved in '[File Location].'”
+   “Successfully saved in [File Location]". By default, the program saves processed files in a folder called “IG-Parser_Library” under the name [OriginalName_CODED.xlsx]
 
 #### Step 3: Use Tabular and Visual Outputs
 

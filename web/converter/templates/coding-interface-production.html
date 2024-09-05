@@ -34,8 +34,48 @@
     text-align: center; 
 }
 
+.custom-file-input {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    border: 2px dashed#0087cc;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
 
+.input.file-input {
+    display: none; 
 
+}
+
+.file-label {
+    background-color: #0087cc;
+    color: #fff;
+    padding: 15px 15px; 
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-left: 10px;
+    text-align: center; 
+    display: inline-block; 
+    width: 100%; 
+    max-width: 150px;
+}
+.file-label:hover {
+    background-color: #6eb8dd;
+}
+
+.file-name {
+    font-family: Roboto, Arial, sans-serif;
+    font-size: 16px;
+    color: #555;
+    margin-left: 20px;
+    display: inline-block;  
+}
+    
 /* Responsive Design Adjustments */
 @media (max-width: 768px) {
     .grid-container {
@@ -59,6 +99,42 @@
         enctype="multipart/form-data"
         method="POST">
       <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropZone = document.getElementById('drop-zone');
+            const fileInput = document.getElementById('file');
+            const fileName = document.getElementById('file-name');
+        
+            dropZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+        
+            dropZone.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+            });
+        
+            dropZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    updateFileName();
+                }
+            });
+
+            fileInput.addEventListener('change', updateFileName);
+        
+            function updateFileName() {
+                if (fileInput.files.length > 0) {
+                    fileName.textContent = fileInput.files[0].name;
+                } else {
+                    fileName.textContent = 'No file chosen';
+                }
+            }
+        });
           // Local storage
 
           /*
