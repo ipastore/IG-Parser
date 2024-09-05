@@ -19,4 +19,4 @@ If you intend to contribute to this forked code base, please do so via pull requ
 
 ## Acknowledgment of Original Repository
 
-This fork is based on the original IG-Parser by Christopher Frantz [[@chrfrantz](https://github.com/chrfrantz)]. We acknowledge and thank the original author for his foundational work, which made this forked version possible, and for his valuable feedback on an earlier version of this module.
+This fork is based on the original IG-Parser developed by Christopher Frantz [[@chrfrantz](https://github.com/chrfrantz)]. We want to thank him for his foundational work, which made this forked version possible, and for his valuable feedback on an earlier version of this fork.
